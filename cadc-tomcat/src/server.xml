@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Server port="8005" shutdown="SHUTDOWN">
+  <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
+  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener" />
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener" />
+  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener" />
+
+  <GlobalNamingResources/>
+
+  <!-- external config by system properties:
+    tomcat.connector.scheme=https
+    tomcat.connector.proxyName=<SSL terminator host name>
+    tomcat.connector.proxyPort=443
+  -->
+  <Service name="Catalina">
+    <Executor name="tomcatThreadPool" namePrefix="request-proc-"
+        maxThreads="1024" minSpareThreads="16"/>
+    <Connector port="8080" protocol="HTTP/1.1" executor="tomcatThreadPool"
+               connectionTimeout="20000" 
+               acceptCount="100000" acceptThreadCount="2"
+               scheme="${tomcat.connector.scheme}" 
+               proxyName="${tomcat.connector.proxyName}" 
+               proxyPort="${tomcat.connector.proxyPort}" />
+    <Engine name="Catalina" defaultHost="localhost">
+      <Host name="localhost"  appBase="webapps" unpackWARs="true" autoDeploy="true">
+      </Host>
+    </Engine>
+  </Service>
+</Server>
