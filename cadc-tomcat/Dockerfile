@@ -11,10 +11,14 @@ RUN ln -s  /usr/share/java/postgresql-jdbc/postgresql.jar /usr/share/tomcat/lib/
 # JVM settings
 RUN echo JAVA_OPTS=\"-Xms512m -Xmx2048m -XX:+UseParallelGC -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/logs/tomcat-dump.%p.hprof \$JAVA_OPTS\" >> /etc/tomcat/tomcat.conf
 
+COPY src/nofiles.conf /etc/security/limits.d/
 COPY src/server.xml /etc/tomcat/server.xml
+
+# disable all jar scanning for TLDs
 RUN echo "tomcat.util.scan.StandardJarScanFilter.jarsToSkip=*.jar" >> /etc/tomcat/catalina.properties
 
-RUN mkdir -p /conf /logs /root/.ssl /usr/share/tomcat/webapps/ROOT && ln -s /conf/cadcproxy.pem /root/.ssl/cadcproxy.pem
+RUN mkdir -p /conf /logs /root/.ssl /usr/share/tomcat/webapps/ROOT \
+    && ln -s /conf/cadcproxy.pem /root/.ssl/cadcproxy.pem
 COPY src/index.html /usr/share/tomcat/webapps/ROOT/
 
 COPY src/cadc-tomcat-start /usr/bin/cadc-tomcat-start
