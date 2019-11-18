@@ -8,16 +8,19 @@ in haproxcy.cfg).
 
 The container expects that a directory is attached to /conf and containing the following:
 
-## catalina.properties : system properties required by tomcat and application(s)
+## catalina.properties
+System properties required by tomcat:
 
 tomcat.connector.scheme=https
+
 tomcat.connector.proxyName=<SSL terminator host name>
+
 tomcat.connector.proxyPort=443
 
 Additional system properties to configure the application are also added here.
 
-## cadcproxy.pem : optional proxy certificate 
-This certificate is used to use to make some priviledged server-to-server calls (A&A support).
+## cadcproxy.pem 
+This optional certificate is used to use to make some priviledged server-to-server calls (A&A support).
 
 ## building it
 docker build -t cadc-tomcat -f Dockerfile .
