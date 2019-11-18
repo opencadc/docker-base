@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ -f /conf/catalina.properties ]; then
+    cat /conf/catalina.properties >> /etc/tomcat/catalina.properties
+fi
+
+/usr/libexec/tomcat/server start >& /logs/catalina.out
+
