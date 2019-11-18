@@ -13,7 +13,7 @@ System properties required by tomcat:
 
 tomcat.connector.scheme=https
 
-tomcat.connector.proxyName=<SSL terminator host name>
+tomcat.connector.proxyName={SSL terminator host name}
 
 tomcat.connector.proxyPort=443
 
