@@ -29,5 +29,8 @@ docker build -t cadc-tomcat -f Dockerfile .
 docker run -it --volume=/path/to/conf:/conf:ro cadc-tomcat:latest /bin/bash
 
 ## running it
-docker run -d -p {external http port}:8080 --volume=/path/to/external/conf:/conf:ro --volume=/path/to/external/logs:/logs:rw cadc-tomcat:latest
+docker run -d --volume=/path/to/external/conf:/conf:ro --volume=/path/to/external/logs:/logs:rw cadc-tomcat:latest
+
+One can expose the tomcat port (-p {external http port}:8080) or use a proxy on the same host to access it via 
+the private IP address. 
 
