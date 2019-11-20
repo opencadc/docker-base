@@ -17,6 +17,4 @@ RUN mkdir /logs
 RUN mkdir /conf
 
 COPY src/entrypoint /usr/bin/entrypoint
-#ENTRYPOINT [ "/usr/bin/entrypoint", "-f", "/usr/local/etc/haproxy/haproxy.cfg" ]
 CMD [ "/usr/bin/entrypoint", "-f", "/usr/local/etc/haproxy/haproxy.cfg" ]
-#CMD ["-f", "/usr/local/etc/haproxy/haproxy.cfg"]
