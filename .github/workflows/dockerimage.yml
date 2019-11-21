@@ -12,5 +12,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+    - name: Build cadc-tomcat
+      run: cd cadc-tomcat && docker build . --file Dockerfile --tag cadc-tomcat:$(date +%s)
+## TODO: cadc-postgresql-dev relies on the private cadc yum repo
+#    - name: Build cadc-postgresql-dev
+#      run: cd cadc-postgresql-dev && docker build . --file Dockerfile --tag cadc-postgresql-dev:$(date +%s)
+    - name: Build cadc-haproxy-dev
+      run: test -d cadc-haproxy-dev && (cd cadc-haproxy-dev && docker build . --file Dockerfile --tag cadc-haproxy-dev:$(date +%s)) || echo "not found"
