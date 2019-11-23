@@ -1,0 +1,4 @@
+The haproxy.cfg in this directory can be use to test some haproxy configuration.
+The backend goes to httpbin.org so the /headers path will return all the
+headers that haproxy sends to the backend. When haproxy is invoked with user
+certifactes, the certificate should appear as "X-Client-Certificate" header.

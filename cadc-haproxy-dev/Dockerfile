@@ -10,11 +10,8 @@ RUN rm /etc/rsyslog.d/listen.conf
 
 # set config for haproxy
 COPY src/haproxy/haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
-# copy extra CA certs to go into the CA bundle
-COPY src/haproxy/cacerts/* /etc/pki/ca-trust/source/anchors/
 
 RUN mkdir /logs
-RUN mkdir /conf
 
 COPY src/entrypoint /usr/bin/entrypoint
 CMD [ "/usr/bin/entrypoint", "-f", "/usr/local/etc/haproxy/haproxy.cfg" ]
