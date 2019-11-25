@@ -1,0 +1,42 @@
+#!/bin/bash
+
+trap "echo 'ERROR running/starting haproxy'; exit -1" ERR
+
+
+# log to external
+LOGDIR=/logs
+LOG=$LOGDIR/haproxy.log
+CONFDIR=/conf
+
+touch $LOG
+
+echo -n "START: " >> $LOG
+date >> $LOG
+
+rsyslogd
+
+if [ ! -e $CONFDIR ]; then
+    echo "ERROR: Missing $CONFIDR mount directory. It is required for configuration." && exit -1 >> $LOG 
+fi
+
+if [ ! -e $CONFDIR/server-cert.pem ]; then
+    echo "ERROR: Missing $CONFDIR/server-cert.pem." && exit -1 >> $LOG 
+fi
+
+if [ -e $CONFDIR/cacerts ]; then
+    echo "Configure CA bundle with extra certificates from $CONFDIR/cacerts" >> $LOG
+    cp $CONFDIR/cacerts/* /etc/pki/ca-trust/source/anchors/
+else
+    echo "No extra certificates to configure the CA bundle found" >> $LOG
+fi
+
+if [ -e $CONFDIR/haproxy.cfg ]; then
+    cp $CONFDIR/haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
+    echo "Using custom haproxy.conf found in $CONFDIR" >> $LOG
+fi
+        
+update-ca-trust
+haproxy "$@"
+
+echo -n "init DONE: " >> $LOG
+date >> $LOG
