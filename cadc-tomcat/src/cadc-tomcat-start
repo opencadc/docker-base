@@ -1,8 +1,22 @@
 #!/bin/bash
 
-if [ -f /conf/catalina.properties ]; then
+# log to external
+LOGDIR=/logs
+LOG=$LOGDIR/catalina.out
+CONFDIR=/conf
+
+touch $LOG
+
+if [ -f $CONFDIR/catalina.properties ]; then
+    echo "Configure tomcat with extra properties from $CONFDIR/catalina.properties" >> $LOG
     cat /conf/catalina.properties >> /etc/tomcat/catalina.properties
 fi
 
-/usr/libexec/tomcat/server start >& /logs/catalina.out
+if [ -e $CONFDIR/cacerts ]; then
+    echo "Configure CA bundle with extra certificates from $CONFDIR/cacerts" >> $LOG
+    cp $CONFDIR/cacerts/* /etc/pki/ca-trust/source/anchors/
+    update-ca-trust
+fi
+
+/usr/libexec/tomcat/server start >& $LOG
 
