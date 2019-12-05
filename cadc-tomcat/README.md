@@ -22,6 +22,9 @@ Additional system properties to configure the application are also added here.
 ## cadcproxy.pem 
 This optional certificate is used to use to make some priviledged server-to-server calls (A&A support).
 
+## cacerts
+This optional directory includes CA certificates (pem format) are added to the system trust store.
+
 ## building it
 docker build -t cadc-tomcat -f Dockerfile .
 
