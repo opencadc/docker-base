@@ -6,7 +6,7 @@ SSL termination and forwards calls via HTTP on port 8080. Optional client certif
 via the X-Client-Certificate HTTP header (http-request set-header X-Client-Certificate %[ssl_c_der,base64]
 in haproxcy.cfg).
 
-The container expects that a directory is attached to /conf and containing the following:
+The container expects that a directory is attached to /config and containing the following:
 
 ## catalina.properties
 System properties required by tomcat:
@@ -17,7 +17,8 @@ tomcat.connector.proxyName={SSL terminator host name}
 
 tomcat.connector.proxyPort=443
 
-Additional system properties to configure the application are also added here.
+Additional system properties to configure the application are also added here. Applications can find files in this
+directory using ${user.home}/config (the user.home java system property).
 
 ## cadcproxy.pem 
 This optional certificate is used to use to make some priviledged server-to-server calls (A&A support).
@@ -29,10 +30,10 @@ This optional directory includes CA certificates (pem format) are added to the s
 docker build -t cadc-tomcat -f Dockerfile .
 
 ## checking it
-docker run -it --volume=/path/to/conf:/conf:ro cadc-tomcat:latest /bin/bash
+docker run -it --volume=/path/to/config:/config:ro cadc-tomcat:latest /bin/bash
 
 ## running it
-docker run -d --volume=/path/to/external/conf:/conf:ro --volume=/path/to/external/logs:/logs:rw cadc-tomcat:latest
+docker run -d --volume=/path/to/external/config:/config:ro --volume=/path/to/external/logs:/logs:rw cadc-tomcat:latest
 
 One can expose the tomcat port (-p {external http port}:8080) or use a proxy on the same host to access it via 
 the private IP address. 
