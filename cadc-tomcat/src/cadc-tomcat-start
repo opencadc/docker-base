@@ -1,22 +1,37 @@
 #!/bin/bash
 
-# log to external
+SELF=cadc-tomcat-start
+
+CONFDIR=/config
+
 LOGDIR=/logs
-LOG=$LOGDIR/catalina.out
-CONFDIR=/conf
+LOG=$LOGDIR/${SELF}.log
 
 touch $LOG
 
+TS=$(date)
+echo "$TS $SELF START" >> $LOG
+
 if [ -f $CONFDIR/catalina.properties ]; then
-    echo "Configure tomcat with extra properties from $CONFDIR/catalina.properties" >> $LOG
-    cat /conf/catalina.properties >> /etc/tomcat/catalina.properties
+    echo "Configure tomcat with extra properties: $CONFDIR/catalina.properties" >> $LOG
+    cat $CONFDIR/catalina.properties >> /etc/tomcat/catalina.properties
 fi
 
 if [ -e $CONFDIR/cacerts ]; then
-    echo "Configure CA bundle with extra certificates from $CONFDIR/cacerts" >> $LOG
+    echo "Configure CA bundle with extra certificates: $CONFDIR/cacerts" >> $LOG
     cp $CONFDIR/cacerts/* /etc/pki/ca-trust/source/anchors/
     update-ca-trust
 fi
+
+if [ -f $CONFDIR/cadcproxy.pem ]; then
+    echo "Link proxy certificate: $CONFDIR/cadcproxy.pem" >> $LOG
+    ln -s $CONFDIR/cadcproxy.pem /root/.ssl
+fi
+
+TS=$(date)
+echo "$TS $SELF DONE" >> $LOG
+
+LOG=$LOGDIR/catalina.log
 
 /usr/libexec/tomcat/server start >& $LOG
 
