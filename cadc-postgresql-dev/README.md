@@ -31,8 +31,9 @@ tap_schema : tapadm
 uws : tapadm
 
 These schemas are available in all databases. The first two (caom2 and inventory) are 
-for specific content; it would be feasible to have a single "content" schema and run 
-separate servers instead... TBD.
+for specific content; it would be feasible to have a single "content" user and schema and run 
+separate servers instead... or to have a config file read on startup with a list of schema(s)
+to create... TBD.
 
 ## building it
 docker build -t cadc-postgresql-dev -f Dockerfile .
@@ -41,7 +42,7 @@ docker build -t cadc-postgresql-dev -f Dockerfile .
 docker run -it cadc-postgresql-dev:latest /bin/bash
 
 ## running it
-docker run -d --volume=/path/to/external/logs:/logs:rw cadc-postgresql-dev:latest
+docker run -d --volume=/path/to/external/logs:/logs:rw --name pgdev cadc-postgresql-dev:latest
 
 One can expose the postgres server port (-p {external http port}:5432) or access it from an application 
 on the same host via the private IP address.

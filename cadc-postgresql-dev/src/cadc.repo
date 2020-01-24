@@ -1,6 +1,0 @@
-[cadc]
-name=CADC-built packages
-baseurl=http://repo.cadc.dao.nrc.ca/cadc/SL/$releasever/$basearch/
-enabled=1
-gpgcheck=0
-priority=1
