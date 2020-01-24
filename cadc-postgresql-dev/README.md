@@ -32,7 +32,7 @@ uws : tapadm
 
 These schemas are available in all databases. The first two (caom2 and inventory) are 
 for specific content; it would be feasible to have a single "content" user and schema and run 
-separate servers instead... or to have a config file read on startup with a liost of schema(s)
+separate servers instead... or to have a config file read on startup with a list of schema(s)
 to create... TBD.
 
 ## building it
