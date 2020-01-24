@@ -16,8 +16,10 @@
     <Executor name="tomcatThreadPool" namePrefix="request-proc-"
         maxThreads="1024" minSpareThreads="16"/>
     <Connector port="8080" protocol="HTTP/1.1" executor="tomcatThreadPool"
+               acceptCount="100000" 
+               acceptorThreadCount="2"
                connectionTimeout="20000" 
-               acceptCount="100000" acceptorThreadCount="2"
+               secure="${tomcat.connector.secure}"
                scheme="${tomcat.connector.scheme}" 
                proxyName="${tomcat.connector.proxyName}" 
                proxyPort="${tomcat.connector.proxyPort}" />
