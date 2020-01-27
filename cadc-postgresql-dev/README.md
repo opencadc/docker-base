@@ -28,6 +28,7 @@ caom2 : caom2
 inventory : invadm
 
 tap_schema : tapadm
+tap_upload : tapuser
 uws : tapadm
 
 These schemas are available in all databases. The first two (caom2 and inventory) are 
