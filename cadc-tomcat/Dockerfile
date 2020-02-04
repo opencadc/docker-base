@@ -1,11 +1,12 @@
 FROM fedora:30 
 
 # install required software
+RUN dnf makecache -y
 RUN dnf update -y
 RUN dnf install -y java-1.8.0-openjdk-headless.x86_64 tomcat.noarch ca-certificates
 
 # install and link open source JDBC driver(s) into tomcat
-RUN dnf install postgresql-jdbc && ln -s /usr/share/java/postgresql-jdbc/postgresql.jar /usr/share/tomcat/lib/
+RUN dnf install -y postgresql-jdbc && ln -s /usr/share/java/postgresql-jdbc/postgresql.jar /usr/share/tomcat/lib/
 
 RUN dnf clean all
 
