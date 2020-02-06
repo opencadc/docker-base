@@ -55,13 +55,19 @@ TBD: the postgresql-jdbc driver is already included in the image and it may be f
 TBD: this approach is questionable since this is software and not configuration per se.
 
 ## building it
+```
 docker build -t cadc-tomcat -f Dockerfile .
+```
 
 ## checking it
+```
 docker run -it --rm --volume=/path/to/config:/config:ro cadc-tomcat:latest /bin/bash
+```
 
 ## running it
+```
 docker run -d --user tomcat:tomcat --volume=/path/to/config:/config:ro cadc-tomcat:latest ...
+```
 
 One can expose the tomcat port (-p {external http port}:8080) or use a proxy on the same host to access it via 
 the private IP address. 
