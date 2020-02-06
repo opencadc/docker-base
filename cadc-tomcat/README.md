@@ -1,7 +1,8 @@
 # base cadc-tomcat image
 
-Base image with Java (currently 8) and Tomcat (9) intended for deploying web services. The goal is for 
-child images to 
+Base image with Java (currently 8) and Tomcat (9) intended for deploying web services. The goal is for child 
+images to simply add a war file to /usr/share/tomcat/webapps and leave the rest to runtime deployment. This 
+image can be run as the user "tomcat" (see below).
 
 ## Expected deployment
 This tomcat instance is expected to have a proxy (HAproxy, apache, nginx) in front that performs
@@ -9,7 +10,8 @@ SSL termination and forwards calls via HTTP on port 8080. Optional client certif
 via the X-Client-Certificate HTTP header (http-request set-header X-Client-Certificate %[ssl_c_der,base64]
 in haproxcy.cfg).
 
-Output from the tomcat startup and the tomcat server itself are written to /logs. 
+Output from the tomcat startup and the tomcat server itself are written to stdout (including JVM OnError
+logs).
 
 Runtime configuration is found in /config and includes the following:
 
@@ -59,7 +61,7 @@ docker build -t cadc-tomcat -f Dockerfile .
 docker run -it --rm --volume=/path/to/config:/config:ro cadc-tomcat:latest /bin/bash
 
 ## running it
-docker run -d --volume=/path/to/config:/config:ro --volume=/path/to/logs:/logs:rw cadc-tomcat:latest
+docker run -d --user tomcat:tomcat --volume=/path/to/config:/config:ro cadc-tomcat:latest ...
 
 One can expose the tomcat port (-p {external http port}:8080) or use a proxy on the same host to access it via 
 the private IP address. 

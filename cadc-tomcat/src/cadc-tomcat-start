@@ -4,43 +4,38 @@ SELF=cadc-tomcat-start
 
 CONFDIR=/config
 
-SCRIPTLOGDIR=/logs
-mkdir -p $SCRIPTLOGDIR
-
-SCRIPTLOG=$LOGDIR/${SELF}.log
-TOMCATSCRIPTLOG=$LOGDIR/catalina.log
-
-touch $SCRIPTLOG
-
 TS=$(date)
-echo "$TS $SELF START" >> $SCRIPTLOG
+echo "$TS $SELF START"
+echo "user: $USER"
+echo "home: $HOME"
 
 if [ -f $CONFDIR/catalina.properties ]; then
-    echo "Configure tomcat with extra properties: $CONFDIR/catalina.properties" >> $SCRIPTLOG
+    echo "Configure tomcat with extra properties: $CONFDIR/catalina.properties"
     cat $CONFDIR/catalina.properties >> /etc/tomcat/catalina.properties
 fi
 
 if [ -e $CONFDIR/cacerts ]; then
-    echo "Configure CA bundle with extra certificates: $CONFDIR/cacerts" >> $SCRIPTLOG
+    echo "Configure CA bundle with extra certificates: $CONFDIR/cacerts"
     cp $CONFDIR/cacerts/* /etc/pki/ca-trust/source/anchors/
-    update-ca-trust
+    sudo update-ca-trust
 fi
 
 if [ -e $CONFDIR/lib ]; then
-    echo "Add extra jars to tomcat classpath: $CONFDIR/lib" >> $SCRIPTLOG
+    echo "Add extra jars to tomcat classpath: $CONFDIR/lib"
     cp $CONFDIR/lib/* /usr/share/tomcat/lib/
 fi
 
 if [ -f $CONFDIR/cadcproxy.pem ]; then
-    echo "Link proxy certificate: $CONFDIR/cadcproxy.pem" >> $SCRIPTLOG
-    su -l tomcat (mkdir /usr/share/tomcat/.ssl && chmod 700 /usr/share/tomcat/.ssl)
-    su -l tomcat ln -s $CONFDIR/cadcproxy.pem /usr/share/tomcat/.ssl/
+    echo "Link proxy certificate: $CONFDIR/cadcproxy.pem"
+    mkdir $HOME/.ssl
+    chmod 700 $HOME/.ssl
+    ln -s $CONFDIR/cadcproxy.pem $HOME/.ssl/
 fi
 
-ln -s /config /usr/share/tomcat/config
+ln -s /config $HOME/config
 
 TS=$(date)
-echo "$TS $SELF DONE" >> $SCRIPTLOG
+echo "$TS $SELF DONE"
 
-su -l tomcat /usr/libexec/tomcat/server start >& $TOMCATLOG
+/usr/libexec/tomcat/server start
 
