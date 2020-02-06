@@ -66,7 +66,7 @@ docker run -it --rm --volume=/path/to/config:/config:ro cadc-tomcat:latest /bin/
 
 ## running it
 ```
-docker run -d --user tomcat:tomcat --volume=/path/to/config:/config:ro cadc-tomcat:latest ...
+docker run -d --user tomcat:tomcat --volume=/path/to/config:/config:ro cadc-tomcat:latest
 ```
 
 One can expose the tomcat port (-p {external http port}:8080) or use a proxy on the same host to access it via 
