@@ -18,7 +18,8 @@ COPY src/tomcat-sudo-perms /etc/sudoers.d/
 RUN chgrp tomcat /etc/pki/ca-trust/source/anchors \
     && chmod 775 /etc/pki/ca-trust/source/anchors \
     && chmod 440 /etc/sudoers.d/tomcat-sudo-perms \
-    && chmod 664 /etc/tomcat/catalina.properties
+    && chmod 664 /etc/tomcat/catalina.properties \
+    && chmod 664 /etc/tomcat/tomcat.conf
 
 ## see https://bugzilla.redhat.com/show_bug.cgi?id=1773148
 RUN touch /etc/sudo.conf && echo "Set disable_coredump false" > /etc/sudo.conf
