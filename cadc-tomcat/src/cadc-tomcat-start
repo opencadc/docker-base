@@ -14,9 +14,9 @@ if [ -f $CONFDIR/catalina.properties ]; then
     cat $CONFDIR/catalina.properties >> /etc/tomcat/catalina.properties
 fi
 
-if [ -f $CONFDIR/tomcat_conf.properties ]; then
-    echo "Configure tomcat_conf with extra properties: $CONFDIR/tomcat_conf.properties"
-    cat $CONFDIR/tomcat_conf.properties >> /etc/tomcat/tomcat.conf
+if [ -f $CONFDIR/tomcat.conf ]; then
+    echo "Configure tomcat with extra properties: $CONFDIR/tomcat.conf"
+    cat $CONFDIR/tomcat.conf >> /etc/tomcat/tomcat.conf
 fi
 
 if [ -e $CONFDIR/cacerts ]; then
