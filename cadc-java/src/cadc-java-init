@@ -22,7 +22,7 @@ if [ -f $CONFDIR/cadcproxy.pem ]; then
     ln -s $CONFDIR/cadcproxy.pem $HOME/.ssl/
 fi
 
-test -e $HOME/config || ln -s /config $HOME/config
+test -e /config && (test -e $HOME/config || ln -s /config $HOME/config)
 
 TS=$(date)
 echo "$TS $SELF DONE"
