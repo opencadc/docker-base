@@ -3,7 +3,7 @@ FROM fedora:30
 # install required software
 RUN dnf makecache -y
 RUN dnf update -y
-RUN dnf install -y java-1.8.0-openjdk-headless.x86_64 ca-certificates sudo
+RUN dnf install -y java-1.8.0-openjdk-headless.x86_64 ca-certificates sudo which
 
 RUN dnf clean all
 
