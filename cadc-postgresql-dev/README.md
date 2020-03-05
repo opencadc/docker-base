@@ -6,31 +6,30 @@ security.
 
 ## databases
 On startup, the following databases are created:
-
+```
 cadctest : intended for database library integration tests
 content  : intended for web service back end integration tests
+```
 
 ## users
 The following user accounts are created (name : password):
-
+```
 caom2 : pw-caom2
 invadm : pw-invadm
-
 tapadm : pw-tapadm
 tapuser : pw-tapuser
-
+```
 These users are available in all databases.
 
 ## schemas
 The following schemas are created (name : acccount with full permissions):
-
+```
 caom2 : caom2
 inventory : invadm
-
 tap_schema : tapadm
 tap_upload : tapuser
 uws : tapadm
-
+```
 These schemas are available in all databases. The first two (caom2 and inventory) are 
 for specific content; it would be feasible to have a single "content" user and schema and run 
 separate servers instead... or to have a config file read on startup with a list of schema(s)
