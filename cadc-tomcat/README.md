@@ -37,6 +37,13 @@ Additional system properties to configure the application can also be added here
 Application specific configuration files can also be placed in /config; applications can find them 
 using ${user.home}/config (the user.home java system property).
 
+## tomcat.conf
+This optional file contains java system properties used by the tomcat configuration:
+
+```
+JAVA_OPTS=" {options added during tomcat startup} $JAVA_OPTS"
+```
+
 ## cadcproxy.pem 
 This optional certificate is used to use to make some priviledged server-to-server calls (A&A support).
 

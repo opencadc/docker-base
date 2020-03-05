@@ -14,6 +14,11 @@ if [ -f $CONFDIR/catalina.properties ]; then
     cat $CONFDIR/catalina.properties >> /etc/tomcat/catalina.properties
 fi
 
+if [ -f $CONFDIR/tomcat.conf ]; then
+    echo "Configure tomcat with extra properties: $CONFDIR/tomcat.conf"
+    cat $CONFDIR/tomcat.conf >> /etc/tomcat/tomcat.conf
+fi
+
 if [ -e $CONFDIR/cacerts ]; then
     echo "Configure CA bundle with extra certificates: $CONFDIR/cacerts"
     cp $CONFDIR/cacerts/* /etc/pki/ca-trust/source/anchors/
