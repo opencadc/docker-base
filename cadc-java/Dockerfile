@@ -19,7 +19,7 @@ RUN chgrp nobody /etc/pki/ca-trust/source/anchors \
 RUN touch /etc/sudo.conf && echo "Set disable_coredump false" > /etc/sudo.conf
 
 # JVM settings
-ENV JAVA_OPTS="-Xms512m -Xmx2048m -XX:+UseParallelGC -XX:+HeapDumpOnOutOfMemoryError -XX:OnError=\'cat hs_err_pid%p.log\'"
+ENV JAVA_OPTS="-Xms512m -Xmx2048m -XX:+UseParallelGC -XX:+HeapDumpOnOutOfMemoryError -XX:OnError='cat hs_err_pid%p.log'"
 
 RUN mkdir /.ssl && chown nobody.nobody /.ssl && chmod 700 /.ssl
 

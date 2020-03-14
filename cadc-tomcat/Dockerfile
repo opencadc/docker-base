@@ -26,7 +26,7 @@ RUN touch /etc/sudo.conf && echo "Set disable_coredump false" > /etc/sudo.conf
 
 # JVM settings
 RUN echo JAVA_OPTS=\"-Xms512m -Xmx2048m -XX:+UseParallelGC \$JAVA_OPTS\" >> /etc/tomcat/tomcat.conf
-RUN echo JAVA_OPTS=\"-XX:+HeapDumpOnOutOfMemoryError -XX:OnError=\'cat hs_err_pid%p.log\'  \$JAVA_OPTS\" >> /etc/tomcat/tomcat.conf
+RUN echo JAVA_OPTS=\"-XX:+HeapDumpOnOutOfMemoryError -XX:OnError='cat hs_err_pid%p.log' \$JAVA_OPTS\" >> /etc/tomcat/tomcat.conf
 
 # disable all jar scanning for TLDs
 RUN echo "tomcat.util.scan.StandardJarScanFilter.jarsToSkip=*.jar" >> /etc/tomcat/catalina.properties
