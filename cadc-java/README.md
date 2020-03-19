@@ -1,4 +1,4 @@
-# base cadc-tomcat image
+# base cadc-java image
 
 Base image with Java (currently 8) intended for Java applications. The goal is for child 
 images to simply add the application code and leave the rest to runtime deployment. This 
