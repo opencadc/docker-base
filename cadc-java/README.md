@@ -4,8 +4,9 @@ Base image with Java (currently 8) intended for Java applications. The goal is f
 images to simply add the application code and leave the rest to runtime deployment. This 
 image can be run as the user "nobody" (see below).
 
-TBD: the postgresql-jdbc driver is already included in the image and it may be feasible 
-to add other open source drivers as needed.
+Child images should use the  Dockerfile CMD option to specify the startup command. This allows
+the ENTRYPOINT script specified here to run and initialise the environment before starting the
+application.
 
 ## Expected deployment
 Child images are responsible for setting the command to execute. 
