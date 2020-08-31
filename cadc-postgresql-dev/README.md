@@ -37,13 +37,19 @@ The `cadmin` account will have full authorization in these "content" schema(s).
 # PostgreSQL 12.x
 
 ## building it 
+```
 docker build -t cadc-postgresql-dev -f Dockerfile.pg12 .
+```
 
 ## checking it
+```
 docker run -it cadc-postgresql-dev:latest /bin/bash
+```
 
 ## running it
-docker run -d --volume=/path/to/config:/config:ro --name pg12db cadc-postgresql-dev:latest
+```
+docker run -d --volume=/path/to/config:/config:ro --volume=/path/to/logs:/logs:rw --name pg12db cadc-postgresql-dev:latest
+```
 
 One can expose the postgres server port (-p {external http port}:5432) or access it from an application 
 on the same host via the private IP address.
