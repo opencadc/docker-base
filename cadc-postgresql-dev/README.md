@@ -8,14 +8,13 @@ security.
 On startup, the following databases are created:
 ```
 cadctest : intended for database library integration tests
-content  : intended for web service back end integration tests
+content  : intended for web service back end
 ```
 
 ## users
 The following user accounts are created (name : password):
 ```
-caom2 : pw-caom2
-invadm : pw-invadm
+cadmin : pw-cadmin
 tapadm : pw-tapadm
 tapuser : pw-tapuser
 ```
@@ -24,25 +23,27 @@ These users are available in all databases.
 ## schemas
 The following schemas are created (name : acccount with full permissions):
 ```
-caom2 : caom2
-inventory : invadm
 tap_schema : tapadm
 tap_upload : tapuser
 uws : tapadm
 ```
-These schemas are available in all databases. The first two (caom2 and inventory) are 
-for specific content; it would be feasible to have a single "content" user and schema and run 
-separate servers instead... or to have a config file read on startup with a list of schema(s)
-to create... TBD.
+These schemas are available in all databases. Addtional schemas can be configured by including the file
+/config/init-content-schemas.sh with
+```
+SCHEMAS="schema1 schema2 ..."
+```
+The `cadmin` account will have full authorization in these "content" schema(s).
 
-## building it
-docker build -t cadc-postgresql-dev -f Dockerfile .
+# PostgreSQL 12.x
+
+## building it 
+docker build -t cadc-postgresql-dev -f Dockerfile.pg12 .
 
 ## checking it
 docker run -it cadc-postgresql-dev:latest /bin/bash
 
 ## running it
-docker run -d --volume=/path/to/external/logs:/logs:rw --name pgdev cadc-postgresql-dev:latest
+docker run -d --volume=/path/to/config:/config:ro --name pg12db cadc-postgresql-dev:latest
 
 One can expose the postgres server port (-p {external http port}:5432) or access it from an application 
 on the same host via the private IP address.
