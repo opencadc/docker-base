@@ -2,7 +2,10 @@
 
 ## Expected deployment
 This postgresql instance is designed for development support and has a very low level of
-security.
+security. 
+
+Note: the PostgreSQL 10.x build includes the pgsphere extension.
+TODO: add pgsphere extension to the PostgreSQL 12.x build once there is an rpm available from CADC.
 
 ## databases
 On startup, the following databases are created:
