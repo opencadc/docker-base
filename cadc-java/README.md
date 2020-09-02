@@ -35,7 +35,7 @@ docker build -t cadc-java -f Dockerfile .
 
 ## checking it
 ```
-docker run -it --rm --user opencadc:opencadc --volume=/path/to/config:/config:ro cadc-java-test:latest /bin/bash
+docker run -it --rm --user opencadc:opencadc cadc-java:latest /bin/bash
 ```
 
 ## running it

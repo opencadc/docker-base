@@ -3,7 +3,7 @@ FROM fedora:30
 # create unprivaledged user:group with known uid:gid
 RUN groupadd --gid 8675309 opencadc \
     && useradd --uid 8675309 --home-dir / --shell /sbin/nologin \
-        --no-create-home --no-user-group opencadc
+        --no-create-home --no-user-group --no-log-init opencadc
 
 # install required software
 RUN dnf makecache -y

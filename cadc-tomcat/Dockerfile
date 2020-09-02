@@ -3,7 +3,7 @@ FROM fedora:30
 # create tomcat user:group with known uid:gid
 RUN groupadd --gid 8675309 tomcat \
     && useradd --uid 8675309 --home-dir /usr/share/tomcat --shell /sbin/nologin \
-        --no-create-home --no-user-group tomcat
+        --no-create-home --no-user-group --no-log-init tomcat
 
 
 # install required software
