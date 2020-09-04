@@ -19,8 +19,11 @@ jobs:
     - name: Build cadc-tomcat
       run: cd cadc-tomcat && docker build . --file Dockerfile --tag cadc-tomcat:$(date +%s)
     
-    - name: Build cadc-postgresql-dev
-      run: cd cadc-postgresql-dev && docker build . --file Dockerfile --tag cadc-postgresql-dev:$(date +%s)
+    - name: Build cadc-postgresql10-dev
+      run: cd cadc-postgresql-dev && docker build . --file Dockerfile.pg10 --tag cadc-postgresql10-dev:$(date +%s)
+
+    - name: Build cadc-postgresql12-dev
+      run: cd cadc-postgresql-dev && docker build . --file Dockerfile.pg12 --tag cadc-postgresql12-dev:$(date +%s)
     
     - name: Build cadc-haproxy-dev
       run: cd cadc-haproxy-dev && docker build . --file Dockerfile --tag cadc-haproxy-dev:$(date +%s)

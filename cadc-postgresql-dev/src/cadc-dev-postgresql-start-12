@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# log to external
+LOGDIR=/logs
+LOG=$LOGDIR/do-init.log
+
+touch $LOG
+
+echo -n "START: "
+date 
+
+INITDB=0
+
+if [ -e /var/lib/pgsql/12/data/postgresql.conf ]; then
+    echo "do-init: detected existing setup... skipping database init"
+else
+    INITDB=1
+fi
+
+if [ $INITDB == 1 ]; then
+    # change ownership of injected config files
+    chown -R postgres.postgres /var/lib/pgsql/12/*
+    su -l postgres -c '/bin/bash /var/lib/pgsql/12/init-postgres-12.sh'
+fi
+
+# start postgresql server
+su -l postgres -c '/usr/pgsql-12/bin/postmaster -D /var/lib/pgsql/12/data' > $LOGDIR/postgresql.log &
+
+sleep 6
+if [ $INITDB == 1 ]; then
+    # create standard user(s), database(s), schema(s)
+    su -l postgres -c '/bin/bash /var/lib/pgsql/12/init-content.sh'
+fi
+
+echo -n "init DONE: "
+date
+
+echo "waiting for postmaster to terminate..."
+wait
+echo "wait returned... exiting"
+
+

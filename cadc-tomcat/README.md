@@ -38,14 +38,15 @@ Application specific configuration files can also be placed in /config; applicat
 using ${user.home}/config (the user.home java system property).
 
 ## tomcat.conf
-This optional file contains java system properties used by the tomcat configuration:
+This optional file contains configuration used by the tomcat startup, e.g.:
 
 ```
 JAVA_OPTS=" {options added during tomcat startup} $JAVA_OPTS"
 ```
 
 ## cadcproxy.pem 
-This optional certificate is used to use to make some priviledged server-to-server calls (A&A support).
+This optional client certificate is made available as `{user.home}/.ssl/cadcproxy.pem` for use by the
+application (typically: server-to-server calls for A&A support).
 
 TBD: this is questionable since this is a credential and not configuration per se and it probably expires 
 during the lifetime of the container.
@@ -54,8 +55,9 @@ during the lifetime of the container.
 This optional directory includes CA certificates (pem format) that are added to the system trust store.
 
 ## lib
-This optional directory includes java libraries (jar files) that are added to the tomcat system classpath. This can be used
-to include java libraries that are only known at config/deployment time but needed by tomcat (e.g. a JDBC driver for a connection pool declared in the context.xml file).
+This optional directory includes java libraries (jar files) that are added to the tomcat system classpath.
+This can be used to include java libraries that are only known at config/deployment time but needed by 
+tomcat (e.g. a JDBC driver for a connection pool declared in the context.xml file).
 
 TBD: the postgresql-jdbc driver is already included in the image and it may be feasible to add other open source drivers as needed.
 
@@ -68,13 +70,16 @@ docker build -t cadc-tomcat -f Dockerfile .
 
 ## checking it
 ```
-docker run -it --rm --volume=/path/to/config:/config:ro cadc-tomcat:latest /bin/bash
+docker run --user tomcat:tomcat -it --rm --volume=/path/to/config:/config:ro cadc-tomcat:latest /bin/bash
 ```
 
 ## running it
 ```
 docker run --user tomcat:tomcat --volume=/path/to/config:/config:ro cadc-tomcat:latest
 ```
+
+The tomcat uid:gid in the container are an arbitrary high number (8675309); this allows one to grant permissions 
+if an external volume/filesystem is attached at runtime. 
 
 One can expose the tomcat port (-p {external http port}:8080) or use a proxy on the same host to access it via 
 the private IP address. 
