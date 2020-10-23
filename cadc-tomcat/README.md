@@ -19,6 +19,7 @@ Runtime configuration is found in /config and includes the following:
 This required file contains java system properties required by the tomcat configuration:
 
 ```
+tomcat.connector.connectionTimeout={integer milliseconds}
 tomcat.connector.secure={true|false}
 tomcat.connector.scheme={http|https}
 tomcat.connector.proxyName={SSL terminator host}
@@ -26,6 +27,7 @@ tomcat.connector.proxyPort={SSL terminator port}
 ```
 Example for external proxy that handles SSL:
 ```
+tomcat.connector.connectionTimeout=60000
 tomcat.connector.secure=true
 tomcat.connector.scheme=https
 tomcat.connector.proxyName=www.example.net
