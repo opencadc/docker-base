@@ -19,7 +19,7 @@
                acceptCount="100000" 
                acceptorThreadCount="2"
                connectionTimeout="${tomcat.connector.connectionTimeout}" 
-               keepAliveTimeout="${tomcat.connector.connectionTimeout}"
+               keepAliveTimeout="${tomcat.connector.keepAliveTimeout}"
                secure="${tomcat.connector.secure}"
                scheme="${tomcat.connector.scheme}" 
                proxyName="${tomcat.connector.proxyName}" 
