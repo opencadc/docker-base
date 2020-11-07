@@ -49,3 +49,11 @@ docker build -t cadc-java-test -f Dockerfile.test .
 docker run -it --rm --user opencadc:opencadc --volume=/path/to/config:/config:ro cadc-java-test:latest
 ```
 
+## apply version tags
+```bash
+. VERSION && echo "tags: $TAGS" 
+for t in $TAGS; do
+   docker image tag cadc-java:latest cadc-java:$t
+done
+unset TAGS
+```
