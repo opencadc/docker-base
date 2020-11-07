@@ -1,2 +1,2 @@
-# semantic version tags for base containers: major major.minor latest
-TAGS="1 1.0 latest"
+# semantic version tags for base containers: major major.minor
+TAGS="1 1.0"

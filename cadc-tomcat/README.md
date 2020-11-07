@@ -88,3 +88,11 @@ if an external volume/filesystem is attached at runtime.
 One can expose the tomcat port (-p {external http port}:8080) or use a proxy on the same host to access it via 
 the private IP address. 
 
+## apply version tags
+```bash
+. VERSION && echo "tags: $TAGS" 
+for t in $TAGS; do
+   docker image tag cadc-tomcat:latest cadc-tomcat:$t
+done
+unset TAGS
+```
