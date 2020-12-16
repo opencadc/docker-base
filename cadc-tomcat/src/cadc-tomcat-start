@@ -3,6 +3,7 @@
 SELF=cadc-tomcat-start
 
 CONFDIR=/config
+USER=$(whoami)
 
 TS=$(date)
 echo "$TS $SELF START"
@@ -12,6 +13,19 @@ echo "home: $HOME"
 if [ -f $CONFDIR/catalina.properties ]; then
     echo "Configure tomcat with extra properties: $CONFDIR/catalina.properties"
     cat $CONFDIR/catalina.properties >> /etc/tomcat/catalina.properties
+fi
+
+if [ -f $CONFDIR/war-rename.conf ]; then
+    while read line
+    do
+        MV=$(echo $line | awk '{print $1}')
+        if [ "$MV" != "mv" ]; then
+            echo "war-rename: $line SKIPPED"
+        else
+            echo "war-rename: $line"
+            cd /usr/share/tomcat/webapps && $line
+        fi
+    done < $CONFDIR/war-rename.conf
 fi
 
 if [ -f $CONFDIR/tomcat.conf ]; then

@@ -13,9 +13,10 @@ in haproxcy.cfg).
 Output from the tomcat startup and the tomcat server itself are written to stdout (including JVM OnError
 logs).
 
+## configuration
 Runtime configuration is found in /config and includes the following:
 
-## catalina.properties
+### catalina.properties
 This required file contains java system properties required by the tomcat configuration:
 
 ```
@@ -41,21 +42,28 @@ Additional system properties to configure the application can also be added here
 Application specific configuration files can also be placed in /config; applications can find them 
 using ${user.home}/config (the user.home java system property).
 
-## tomcat.conf
+### war-rename.conf
+This optional file contains directives to rename a war file in the webapps directory before
+tomcat is started. 
+```
+mv foo.war bar.war
+```
+
+### tomcat.conf
 This optional file contains configuration used by the tomcat startup, e.g.:
 
 ```
 JAVA_OPTS=" {options added during tomcat startup} $JAVA_OPTS"
 ```
 
-## cadcproxy.pem 
+### cadcproxy.pem 
 This optional client certificate is made available as `{user.home}/.ssl/cadcproxy.pem` for use by the
 application (typically: server-to-server calls for A&A support).
 
 TBD: this is questionable since this is a credential and not configuration per se and it probably expires 
 during the lifetime of the container.
 
-## cacerts
+### cacerts
 This optional directory includes CA certificates (pem format) that are added to the system trust store.
 
 ## lib

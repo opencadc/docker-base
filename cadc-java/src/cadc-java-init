@@ -3,6 +3,7 @@
 SELF=cadc-java-init
 
 CONFDIR=/config
+USER=$(whoami)
 
 TS=$(date)
 echo "$TS $SELF START"
