@@ -14,7 +14,10 @@ Output from the tomcat startup and the tomcat server itself are written to stdou
 logs).
 
 ## configuration
-Runtime configuration is found in /config and includes the following:
+All runtime configuration is located in /config. Application specific configuration files can also be placed 
+here; applications can find them using ${user.home}/config (the user.home java system property). 
+
+Standard tomcat configuration includes the following files:
 
 ### catalina.properties
 This required file contains java system properties required by the tomcat configuration:
@@ -37,10 +40,16 @@ tomcat.connector.proxyName=www.example.net
 tomcat.connector.proxyPort=443
 ```
 
-Additional system properties to configure the application can also be added here.
+The _tomcat.connector properties_ are a subset of the 
+<a href="https://tomcat.apache.org/tomcat-9.0-doc/config/http.html">complete set of configuration options</a> for Tomcat Connector. Other
+configuration settings are either hard coded or left at the default value.
 
-Application specific configuration files can also be placed in /config; applications can find them 
-using ${user.home}/config (the user.home java system property).
+The _secure_, _scheme_, _proxyName_, and _proxyPort_ are the values of the SSL_terminating proxy server that sits in front of the container. 
+They are used so applications see these values in the request URI (instead of the values for the container) and enable applications to generate 
+correct externally usable URLs to othe resources in the applicaiton. This generally removes the need for the proxy to examine and rewrite 
+out-going content (headers and body).
+
+Additional system properties to configure the application can also be added here.
 
 ### war-rename.conf
 This optional file contains directives to rename a war file in the webapps directory before
@@ -48,6 +57,8 @@ tomcat is started.
 ```
 mv foo.war bar.war
 ```
+Note: applications have to be carefully written to never hard code path information and always
+discover it from the request for this to work. Some applications may not be _movable_.
 
 ### tomcat.conf
 This optional file contains configuration used by the tomcat startup, e.g.:
@@ -55,6 +66,8 @@ This optional file contains configuration used by the tomcat startup, e.g.:
 ```
 JAVA_OPTS=" {options added during tomcat startup} $JAVA_OPTS"
 ```
+Note: the default JAVA_OPTS include setting max stack space and max heap size to sensible limits (currently 512MiB and 2GiB
+respectively).
 
 ### cadcproxy.pem 
 This optional client certificate is made available as `{user.home}/.ssl/cadcproxy.pem` for use by the
