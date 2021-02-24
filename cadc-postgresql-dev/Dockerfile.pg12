@@ -1,12 +1,15 @@
 FROM centos:7 
 
+# To allow the --build-arg switch
+ARG PG_RPM_URL=https://download.postgresql.org/pub/repos/yum/reporpms/EL-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+
 # install required software
 RUN yum update -y
 
 # repositories and keys
 RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm \
     && rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-7
-RUN yum install -y https://download.postgresql.org/pub/repos/yum/12/redhat/rhel-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm \
+RUN yum install -y ${PG_RPM_URL} \
     && rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-PGDG
 
 # packages
