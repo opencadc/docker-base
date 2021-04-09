@@ -37,7 +37,15 @@ tomcat.connector.proxyName=www.example.net
 tomcat.connector.proxyPort=443
 ```
 
-Additional system properties to configure the application can also be added here.
+Additional system properties to configure the application can also be added here. 
+
+For example, if 
+* the SSL termination accepts client certificates and forwards them via the X-Client-Certificate http header, and
+* your web application is built on OpenCADC java libraries, and 
+* you want to allow your web application to trust that header in any connection
+then you need to set `ca.nrc.cadc.auth.PrincipalExtractor.enableClientCertHeader = true`. WARNING: setting this
+property opens up a big security hole (clients can easily pass in a certificate and impersonate another user)
+so the tomcat containers *must* not be accessible to any untrusted clients.
 
 Application specific configuration files can also be placed in /config; applications can find them 
 using ${user.home}/config (the user.home java system property).
