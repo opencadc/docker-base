@@ -42,14 +42,20 @@ tomcat.connector.proxyPort=443
 
 The _tomcat.connector properties_ are a subset of the 
 <a href="https://tomcat.apache.org/tomcat-9.0-doc/config/http.html">complete set of configuration options</a> for Tomcat Connector. Other
-configuration settings are either hard coded or left at the default value.
-
-The _secure_, _scheme_, _proxyName_, and _proxyPort_ are the values of the SSL_terminating proxy server that sits in front of the container. 
+configuration settings are either hard coded or left at the default value. The _secure_, _scheme_, _proxyName_, and _proxyPort_ are the values of the SSL_terminating proxy server that sits in front of the container. 
 They are used so applications see these values in the request URI (instead of the values for the container) and enable applications to generate 
 correct externally usable URLs to othe resources in the applicaiton. This generally removes the need for the proxy to examine and rewrite 
 out-going content (headers and body).
 
 Additional system properties to configure the application can also be added here.
+
+For example, if 
+* the SSL termination accepts client certificates and forwards them via the X-Client-Certificate http header, and
+* your web application is built on OpenCADC java libraries, and 
+* you want to allow your web application to trust that header in any connection
+then you need to set `ca.nrc.cadc.auth.PrincipalExtractor.enableClientCertHeader = true`. WARNING: setting this
+property opens up a big security hole (clients can easily pass in a certificate and impersonate another user)
+so the tomcat containers *must* not be accessible to any untrusted clients.
 
 ### war-rename.conf
 This optional file contains directives to rename a war file in the webapps directory before
