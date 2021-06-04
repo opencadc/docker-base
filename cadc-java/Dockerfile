@@ -8,7 +8,7 @@ RUN groupadd --gid 8675309 opencadc \
 # install required software
 RUN dnf makecache -y \
     && dnf update -y \
-    && dnf install -y java-1.8.0-openjdk-headless.x86_64 ca-certificates sudo which \
+    && dnf install -y java-1.8.0-openjdk-headless.x86_64 ca-certificates sudo which procps-ng \
     && dnf clean all \
     && rm -rf /var/cache/yum
 
