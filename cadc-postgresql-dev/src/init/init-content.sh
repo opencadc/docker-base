@@ -10,11 +10,11 @@ psql --command "CREATE USER tapadm  WITH ENCRYPTED PASSWORD 'pw-tapadm';"
 . /config/init-content-schemas.sh
 
 for DBNAME in cadctest content; do
-    createdb $DBNAME 
+    createdb $DBNAME
 
     ## enable extensions: citext pgsphere
     psql -d $DBNAME --command "CREATE EXTENSION IF NOT EXISTS citext;"
-    #psql -d $DBNAME --command "CREATE EXTENSION IF NOT EXISTS pg_sphere;"
+    psql -d $DBNAME --command "CREATE EXTENSION IF NOT EXISTS pg_sphere;"
 
     ## create TAP schema(s)
     psql -d $DBNAME --command "CREATE SCHEMA uws AUTHORIZATION tapadm;"

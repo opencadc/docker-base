@@ -6,7 +6,7 @@ trap "echo 'ERROR running/starting haproxy'; exit -1" ERR
 # log to external
 LOGDIR=/logs
 LOG=$LOGDIR/haproxy.log
-CONFDIR=/conf
+CONFDIR=/config
 
 touch $LOG
 
@@ -32,7 +32,7 @@ fi
 
 if [ -e $CONFDIR/haproxy.cfg ]; then
     cp $CONFDIR/haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
-    echo "Using custom haproxy.conf found in $CONFDIR" >> $LOG
+    echo "Using custom haproxy.cfg found in $CONFDIR" >> $LOG
 fi
         
 update-ca-trust
