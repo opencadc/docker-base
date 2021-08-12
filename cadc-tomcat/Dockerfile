@@ -28,6 +28,10 @@ RUN chgrp tomcat /etc/pki/ca-trust/source/anchors \
     && chmod 664 /etc/tomcat/catalina.properties \
     && chmod 664 /etc/tomcat/tomcat.conf
 
+# hide tomcat version in error pages
+RUN mkdir -p /usr/share/tomcat/lib/org/apache/catalina/util
+COPY src/ServerInfo.properties /usr/share/tomcat/lib/org/apache/catalina/util
+
 ## see https://bugzilla.redhat.com/show_bug.cgi?id=1773148
 RUN touch /etc/sudo.conf && echo "Set disable_coredump false" > /etc/sudo.conf
 
