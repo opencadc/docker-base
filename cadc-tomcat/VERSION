@@ -1,2 +1,4 @@
 # semantic version tags for base containers: major major.minor
-TAGS="1 1.0"
+# 1.0 : fedora 30, openjdk-1.8, tomcat-9
+# 1.1 : fedora 34, java-11-openjdk, tomcat-9, postgresql-jdbc-42
+TAGS="1 1.1"
