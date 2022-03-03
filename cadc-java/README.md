@@ -40,7 +40,7 @@ docker run -it --rm --user opencadc:opencadc cadc-java:latest /bin/bash
 
 ## running it
 ```
-docker run --user opencadc:opencadc --volume=/path/to/config:/config:ro cadc-java:latest
+docker run --rm --user opencadc:opencadc --volume=/path/to/config:/config:ro cadc-java:latest
 ```
 
 ## child container test
