@@ -1,4 +1,4 @@
-FROM fedora:30 
+FROM docker.io/amd64/fedora:34
 
 # create unpriviledged user:group with known uid:gid
 RUN groupadd --gid 8675309 opencadc \
@@ -6,11 +6,8 @@ RUN groupadd --gid 8675309 opencadc \
         --no-create-home --no-user-group --no-log-init opencadc
 
 # install required software
-RUN dnf makecache -y \
-    && dnf update -y \
-    && dnf install -y java-1.8.0-openjdk-headless.x86_64 ca-certificates sudo which procps-ng \
-    && dnf clean all \
-    && rm -rf /var/cache/yum
+RUN dnf install -y java-11-openjdk-headless.x86_64 ca-certificates sudo which procps-ng \
+    && dnf clean all
 
 # system settings and permissions
 COPY src/nofiles.conf /etc/security/limits.d/

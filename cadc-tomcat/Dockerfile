@@ -1,4 +1,4 @@
-FROM fedora:30 
+FROM docker.io/amd64/fedora:34
 
 # create tomcat user:group with known uid:gid
 RUN groupadd --gid 8675309 tomcat \
@@ -8,10 +8,8 @@ RUN groupadd --gid 8675309 tomcat \
 
 # install required software
 # install open source JDBC driver(s)
-RUN dnf makecache -y \
-    && dnf update -y \
-    && dnf install -y java-1.8.0-openjdk-headless.x86_64 tomcat.noarch ca-certificates sudo \
-    && dnf install -y postgresql-jdbc \
+RUN dnf install -y java-11-openjdk-headless.x86_64 tomcat.noarch ca-certificates sudo \
+    && dnf install -y postgresql-jdbc \ 
     && dnf clean all
 
 # link jdbc driver(s) into tomcat lib
