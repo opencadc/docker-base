@@ -7,9 +7,11 @@ psql --command "CREATE USER cadmin   WITH ENCRYPTED PASSWORD 'pw-cadmin'"
 psql --command "CREATE USER tapuser WITH ENCRYPTED PASSWORD 'pw-tapuser';"
 psql --command "CREATE USER tapadm  WITH ENCRYPTED PASSWORD 'pw-tapadm';"
 
+CATALOGS=""
+SCHEMAS=""
 . /config/init-content-schemas.sh
 
-for DBNAME in cadctest content; do
+for DBNAME in $CATALOGS; do
     createdb $DBNAME
 
     ## enable extensions: citext pgsphere
