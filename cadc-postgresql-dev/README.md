@@ -27,12 +27,13 @@ uws        : tapadm
 Databases to be created, and additional schemas for content, are configured by including the 
 file /config/init-content-schemas.sh:
 ```
-CATALOGS="db1 db2 ..."
+DATABASES="db1 db2 ..."
 SCHEMAS="schema1 schema2 ..."
 ```
 
-At least one database (CATALOG) and one schema is needed to start a useful postgresql server. 
-The `cadmin` account will have full authorization in these "content" schema(s).
+Like the TAP-related schemas, all content schemas are created in each dcatabnase. At least one 
+database and one schema is needed to start a useful postgresql server. The `cadmin` account will 
+have full authorization in these "content" schema(s).
 
 # PostgreSQL 12.x
 
