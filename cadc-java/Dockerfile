@@ -1,4 +1,4 @@
-FROM docker.io/amd64/fedora:34
+FROM fedora:34
 
 # MAINTAINER deprecated but upstream fedora image still has it
 LABEL org.opencontainers.image.authors="pdowler.cadc@gmail.com" \
