@@ -1,5 +1,9 @@
 FROM docker.io/amd64/fedora:34
 
+# MAINTAINER deprecated but upstream fedora image still has it
+LABEL org.opencontainers.image.authors="pdowler.cadc@gmail.com" \
+        maintainer="pdowler.cadc@gmail.com"
+
 # create tomcat user:group with known uid:gid
 RUN groupadd --gid 8675309 tomcat \
     && useradd --uid 8675309 --home-dir /usr/share/tomcat --shell /sbin/nologin \
