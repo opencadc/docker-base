@@ -76,12 +76,11 @@ This optional file contains configuration used by the tomcat startup, e.g.:
 ```
 JAVA_OPTS=" {options added during tomcat startup} $JAVA_OPTS"
 ```
-Note: the default JAVA_OPTS include setting max stack space and max heap size to sensible limits (currently 512MiB and 2GiB
-respectively).
+Note: the default JAVA_OPTS include setting max stack space and max heap size to sensible limits 
+(currently 512MiB and 2GiB respectively).
 
-### cadcproxy.pem 
-This optional client certificate is made available as `{user.home}/.ssl/cadcproxy.pem` for use by the
-application (typically: server-to-server calls for A&A support).
+### Client certificates 
+Zero or more client certificate(s) may be included in the config directory and are made available as `{user.home}/.ssl/{cert filename}` for use by the application (typically: server-to-server calls for A&A support). Client certificate files must have a `.pem` extension.
 
 TBD: this is questionable since this is a credential and not configuration per se and it probably expires 
 during the lifetime of the container.
