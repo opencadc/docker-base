@@ -99,12 +99,12 @@ TBD: this approach is questionable since this is software and not configuration 
 
 ## building it
 ```
-docker build -t cadc-tomcat -f Dockerfile .
+DOCKER_CONTENT_TRUST=1 docker build -t cadc-tomcat -f Dockerfile .
 ```
 
 ## checking it
 ```
-docker run --user tomcat:tomcat -it --rm --volume=/path/to/config:/config:ro cadc-tomcat:latest /bin/bash
+docker run --user tomcat:tomcat -it --rm cadc-tomcat:latest /bin/bash
 ```
 
 ## running it
