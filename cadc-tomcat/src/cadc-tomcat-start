@@ -51,6 +51,12 @@ for pcf in $CONFDIR/*.pem; do
     ln -s $pcf $HOME/.ssl/
 done
 
+## brutal CADC-spcific hack
+if [ -e $CONFDIR/dbrc ]; then
+    echo "Link dbrc file: $CONFDIR/dbrc"
+    ln -s $CONFDIR/dbrc /usr/share/tomcat/.dbrc
+fi
+
 ln -s /config $HOME/config
 
 TS=$(date)
