@@ -4,6 +4,7 @@ FROM fedora:34
 LABEL org.opencontainers.image.authors="pdowler.cadc@gmail.com" \
 	maintainer="pdowler.cadc@gmail.com"
 
+
 # create unpriviledged user:group with known uid:gid
 RUN groupadd --gid 8675309 opencadc \
     && useradd --uid 8675309 --home-dir / --shell /sbin/nologin \

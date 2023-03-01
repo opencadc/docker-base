@@ -30,7 +30,7 @@ is attached at runtime.
 
 ## building it
 ```
-docker build -t cadc-java -f Dockerfile .
+DOCKER_CONTENT_TRUST=1 docker build -t cadc-java -f Dockerfile .
 ```
 
 ## checking it
