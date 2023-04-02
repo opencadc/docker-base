@@ -1,4 +1,4 @@
-FROM fedora:34
+FROM fedora:37
 
 # MAINTAINER deprecated but upstream fedora image still has it
 LABEL org.opencontainers.image.authors="pdowler.cadc@gmail.com" \
@@ -11,7 +11,7 @@ RUN groupadd --gid 8675309 opencadc \
         --no-create-home --no-user-group --no-log-init opencadc
 
 # install required software
-RUN dnf install -y java-11-openjdk-headless.x86_64 ca-certificates sudo which procps-ng \
+RUN dnf install -y java-11-openjdk-headless.x86_64 ca-certificates sudo which curl \
     && dnf clean all
 
 # system settings and permissions
