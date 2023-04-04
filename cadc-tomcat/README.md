@@ -105,7 +105,9 @@ DOCKER_CONTENT_TRUST=1 docker build -t cadc-tomcat -f Dockerfile .
 
 ## checking it
 ```
-docker run --rm --user tomcat:tomcat -it --rm cadc-tomcat:latest /bin/bash
+docker run --rm -it --user tomcat:tomcat cadc-tomcat:latest /bin/bash
+
+docker run --rm -it cadc-tomcat:latest /bin/bash
 ```
 
 ## running it

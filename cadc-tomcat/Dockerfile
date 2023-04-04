@@ -16,6 +16,7 @@ RUN groupadd --gid 8675309 tomcat \
 # install minimal set of diagnostics tools: mainly for network connectivity
 RUN dnf install -y java-11-openjdk-headless.x86_64 tomcat.noarch ca-certificates sudo \
     && dnf install -y postgresql-jdbc wcslib erfa curl openssl nmap-ncat \
+    && rpm -e --nodeps java-17-openjdk-headless.x86_64 \
     && dnf clean all
 
 # link jdbc driver(s) into tomcat lib
