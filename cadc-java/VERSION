@@ -1,4 +1,5 @@
 # semantic version tags for base containers: major major.minor
 # 1.1 : fedora 30, openjdk-1.8
 # 1.2 : fedora 34, java-11-openjdk
-TAGS="1 1.2"
+# 1.3 : fedora 37, java-11-openjdk
+TAGS="1 1.3"

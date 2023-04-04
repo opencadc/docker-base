@@ -39,23 +39,12 @@ if [ -e $CONFDIR/cacerts ]; then
     sudo update-ca-trust
 fi
 
-if [ -e $CONFDIR/lib ]; then
-    echo "Add extra jars to tomcat classpath: $CONFDIR/lib"
-    cp $CONFDIR/lib/* /usr/share/tomcat/lib/
-fi
-
 for pcf in $CONFDIR/*.pem; do
     echo "Link proxy certificate: $pcf"
     mkdir $HOME/.ssl
     chmod 700 $HOME/.ssl
     ln -s $pcf $HOME/.ssl/
 done
-
-## brutal CADC-spcific hack
-if [ -e $CONFDIR/dbrc ]; then
-    echo "Link dbrc file: $CONFDIR/dbrc"
-    ln -s $CONFDIR/dbrc /usr/share/tomcat/.dbrc
-fi
 
 ln -s /config $HOME/config
 

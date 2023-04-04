@@ -16,12 +16,12 @@ if [ -e $CONFDIR/cacerts ]; then
     sudo update-ca-trust
 fi
 
-if [ -f $CONFDIR/cadcproxy.pem ]; then
-    echo "Link proxy certificate: $CONFDIR/cadcproxy.pem"
+for pcf in $CONFDIR/*.pem; do
+    echo "Link proxy certificate: $pcf"
     mkdir -p $HOME/.ssl
     chmod 700 $HOME/.ssl
     ln -s $CONFDIR/cadcproxy.pem $HOME/.ssl/
-fi
+done
 
 test -e /config && (test -e $HOME/config || ln -s /config $HOME/config)
 

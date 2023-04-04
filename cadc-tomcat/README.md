@@ -1,6 +1,6 @@
 # base cadc-tomcat image
 
-Base image with Java (currently 8) and Tomcat (9) intended for deploying web services. The goal is for child 
+Base image with Java (currently 11) and Tomcat (9) intended for deploying web services. The goal is for child 
 images to simply add a war file to /usr/share/tomcat/webapps and leave the rest to runtime deployment. This 
 image can be run as the user "tomcat" (see below).
 
@@ -41,21 +41,16 @@ tomcat.connector.proxyPort=443
 ```
 
 The _tomcat.connector properties_ are a subset of the 
-<a href="https://tomcat.apache.org/tomcat-9.0-doc/config/http.html">complete set of configuration options</a> for Tomcat Connector. Other
-configuration settings are either hard coded or left at the default value. The _secure_, _scheme_, _proxyName_, and _proxyPort_ are the values of the SSL_terminating proxy server that sits in front of the container. 
-They are used so applications see these values in the request URI (instead of the values for the container) and enable applications to generate 
-correct externally usable URLs to othe resources in the applicaiton. This generally removes the need for the proxy to examine and rewrite 
-out-going content (headers and body).
+<a href="https://tomcat.apache.org/tomcat-9.0-doc/config/http.html">complete set of 
+configuration options</a> for Tomcat Connector. Other configuration settings are either 
+hard coded or left at the default value. The _secure_, _scheme_, _proxyName_, and 
+_proxyPort_ are the values of the SSL_terminating proxy server that sits in front of 
+the container. They are used so applications see these values in the request URI 
+(instead of the values for the container) and enable applications to generate correct 
+externally usable URLs to othe resources in the applicaiton. This generally removes 
+the need for the proxy to examine and rewrite out-going content (headers and body).
 
 Additional system properties to configure the application can also be added here.
-
-For example, if 
-* the SSL termination accepts client certificates and forwards them via the X-Client-Certificate http header, and
-* your web application is built on OpenCADC java libraries, and 
-* you want to allow your web application to trust that header in any connection
-then you need to set `ca.nrc.cadc.auth.PrincipalExtractor.enableClientCertHeader = true`. WARNING: setting this
-property opens up a big security hole (clients can easily pass in a certificate and impersonate another user)
-so the tomcat containers *must* not be accessible to any untrusted clients.
 
 ### war-rename.conf
 This optional file contains directives to rename a war file in the webapps directory before
@@ -67,8 +62,8 @@ Note: applications have to be carefully written to never hard code path informat
 discover it from the request for this to work. Some applications may not be _movable_.
 
 Renaming the war file can take advantage of some tomcat war file naming conventions
-(https://tomcat.apache.org/tomcat-9.0-doc/config/context.html), for example: to rename the context or
-introduce additional path elements. 
+(https://tomcat.apache.org/tomcat-9.0-doc/config/context.html), for example: to rename 
+the context or introduce additional path elements.
 
 ### tomcat.conf
 This optional file contains configuration used by the tomcat startup, e.g.:
@@ -76,26 +71,32 @@ This optional file contains configuration used by the tomcat startup, e.g.:
 ```
 JAVA_OPTS=" {options added during tomcat startup} $JAVA_OPTS"
 ```
-Note: the default JAVA_OPTS include setting max stack space and max heap size to sensible limits 
-(currently 512MiB and 2GiB respectively).
+Note: the default JAVA_OPTS include setting max stack space and max heap size to 
+sensible limits (currently 512MiB and 2GiB respectively).
 
-### Client certificates 
-Zero or more client certificate(s) may be included in the config directory and are made available as `{user.home}/.ssl/{cert filename}` for use by the application (typically: server-to-server calls for A&A support). Client certificate files must have a `.pem` extension.
+### client certificates 
+Zero or more client certificate(s) may be included in the config directory and are 
+made available as `{user.home}/.ssl/{cert filename}` for use by the application (typically: 
+server-to-server calls for A&A support). Client certificate files must have a `.pem` extension.
 
-TBD: this is questionable since this is a credential and not configuration per se and it probably expires 
-during the lifetime of the container.
+TBD: this is questionable since this is a credential and not configuration per se and it 
+probably expires during the lifetime of the container.
 
 ### cacerts
-This optional directory includes CA certificates (pem format) that are added to the system trust store.
+This optional directory includes CA certificates (pem format) that are added to the 
+system trust store.
 
-## lib
-This optional directory includes java libraries (jar files) that are added to the tomcat system classpath.
-This can be used to include java libraries that are only known at config/deployment time but needed by 
-tomcat (e.g. a JDBC driver for a connection pool declared in the context.xml file).
+## additional linux packages
 
-TBD: the postgresql-jdbc driver is already included in the image and it may be feasible to add other open source drivers as needed.
+This image is based on Fedora Linux, so additional linux packages should be installed using the `dnf` command.
+Packages that are included: ca-certificates, sudo (for CA cert setup), and curl (for manual diagnostics). In
+addition, the PostgreSQL JDBC driver (postgresql-jdbc) is installed and symlinked into the tomcat
+server classpath and can be used in a a connection pool declared in the context.xml file). Other open source
+JDBC drivers could be included (TBD).
 
-TBD: this approach is questionable since this is software and not configuration per se.
+Packages that are known to be added by some downstream OpenCADC image builds: wcslib.x86_64, erfa.x86_64.
+TBD: include this small set of libs in the base image? Reason: avoid downstream install causing untested 
+upgrades in other packages.
 
 ## building it
 ```
@@ -104,25 +105,19 @@ DOCKER_CONTENT_TRUST=1 docker build -t cadc-tomcat -f Dockerfile .
 
 ## checking it
 ```
-docker run --user tomcat:tomcat -it --rm cadc-tomcat:latest /bin/bash
+docker run --rm -it --user tomcat:tomcat cadc-tomcat:latest /bin/bash
+
+docker run --rm -it cadc-tomcat:latest /bin/bash
 ```
 
 ## running it
 ```
-docker run --user tomcat:tomcat --volume=/path/to/config:/config:ro cadc-tomcat:latest
+docker run -rm --user tomcat:tomcat --volume=/path/to/config:/config:ro cadc-tomcat:latest
 ```
 
-The tomcat uid:gid in the container are an arbitrary high number (8675309); this allows one to grant permissions 
-if an external volume/filesystem is attached at runtime. 
+The tomcat uid:gid in the container are an arbitrary high number (8675309); this allows one 
+to grant permissions in external volume/filesystem(s) if attached at runtime.
 
 One can expose the tomcat port (-p {external http port}:8080) or use a proxy on the same host to access it via 
 the private IP address. 
 
-## apply version tags
-```bash
-. VERSION && echo "tags: $TAGS" 
-for t in $TAGS; do
-   docker image tag cadc-tomcat:latest cadc-tomcat:$t
-done
-unset TAGS
-```
