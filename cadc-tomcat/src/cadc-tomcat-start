@@ -39,7 +39,7 @@ if [ -e $CONFDIR/cacerts ]; then
     sudo update-ca-trust
 fi
 
-mkdir $HOME/.ssl
+mkdir -p $HOME/.ssl
 chmod 700 $HOME/.ssl
 for pcf in $CONFDIR/*.pem; do
     echo "Link proxy certificate: $pcf"   
