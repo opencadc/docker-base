@@ -19,8 +19,9 @@ fi
 mkdir -p $HOME/.ssl
 chmod 700 $HOME/.ssl
 for pcf in $CONFDIR/*.pem; do
+    [ -e "$pcf" ] || continue
     echo "Link proxy certificate: $pcf"
-    ln -s $CONFDIR/cadcproxy.pem $HOME/.ssl/
+    ln -s $pcf $HOME/.ssl/
 done
 
 test -e /config && (test -e $HOME/config || ln -s /config $HOME/config)
