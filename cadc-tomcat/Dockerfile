@@ -15,12 +15,14 @@ RUN groupadd --gid 8675309 tomcat \
 # install open source astronomy libraries needed by opencadc JNI libs
 # install minimal set of diagnostics tools: mainly for network connectivity
 RUN dnf install -y java-11-openjdk-headless.x86_64 tomcat.noarch ca-certificates sudo \
-    && dnf install -y postgresql-jdbc wcslib erfa curl openssl nmap-ncat \
+    && dnf install -y postgresql-jdbc \
+    && dnf install -y wcslib erfa curl openssl nmap-ncat \
     && rpm -e --nodeps java-17-openjdk-headless.x86_64 \
     && dnf clean all
 
 # link jdbc driver(s) into tomcat lib
-RUN ln -s /usr/share/java/postgresql-jdbc/postgresql.jar /usr/share/tomcat/lib/
+RUN cd /usr/share/tomcat/lib/ \
+    && for jar in $(find /usr/share/java/postgresql-jdbc /usr/share/java/ongres-s* -type f); do ln -s $jar .; done
 
 # system settings and permissions
 COPY src/nofiles.conf /etc/security/limits.d/
