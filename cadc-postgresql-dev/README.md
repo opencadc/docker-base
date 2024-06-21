@@ -31,13 +31,18 @@ uws        : tapadm
 Databases to be created, and additional schemas for content, are configured by including the 
 file /config/init-content-schemas.sh:
 ```
-DATABASES="db1 db2 ..."
+CATALOGS="db1 db2 ..."
 SCHEMAS="schema1 schema2 ..."
 ```
 
 Like the TAP-related schemas, all content schemas are created in each database. At least one 
 database and one schema is needed to start a useful postgresql server. The `cadmin` account will 
 have full authorization in these "content" schema(s).
+
+See example below for how to provide the `init-content-schemas.sh` at startup.
+
+The postgresql server is confgured to log to `/logs` inside the container. That's normally fine
+for a disposable db container.
 
 ## building it 
 ```
@@ -46,14 +51,21 @@ docker build -t cadc-postgresql-dev -f Dockerfile .
 
 ## checking it
 ```
-docker run -rm -it cadc-postgresql-dev:latest /bin/bash
+docker run --rm -it cadc-postgresql-dev:latest /bin/bash
 ```
 
 ## running it
+To mount the config directorey containing `init-content-schemas.sh`:
 ```
-docker run -d --volume=/path/to/config:/config:ro --volume=/path/to/logs:/logs:rw --name pg15test cadc-postgresql-dev:latest
+docker run -d --volume=/path/to/config:/config:ro --name pg15test cadc-postgresql-dev:latest
+```
+or to mount the single config file:
+```
+docker run -d \
+    --mount type=bind,source=$(pwd)/init-example.sh,target=/config/init-content-schemas.sh,readonly \
+    --name pg15test cadc-postgresql-dev:latest
 ```
 
-One can expose the postgres server port (-p {external http port}:5432) or access it from an application 
+One can expose the postgres server port (-p {external port}:5432) or access it from an application 
 on the same host via the private IP address.
 

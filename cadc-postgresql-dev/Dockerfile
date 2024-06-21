@@ -9,7 +9,7 @@ RUN dnf -y install ${PGDG} \
     && dnf -y install postgresql15-server postgresql15-contrib ${PGSPHERE} \
     && dnf -y clean all
 
-RUN mkdir -p /logs /var/lib/pgsql/15
+RUN mkdir -p /config /logs /var/lib/pgsql/15
 COPY src/config/* /var/lib/pgsql/15/
 COPY src/init/* /usr/local/bin/
 
