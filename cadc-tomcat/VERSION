@@ -3,5 +3,5 @@
 # 1.1 : fedora 34, java-11-openjdk-headless, tomcat-9, postgresql-jdbc-42
 # 1.2 : fedora 37, java-11-openjdk-headless, tomcat-9, postgresql-jdbc-42
 # 1.2.1 : additional symlinks for postgresql-jdbc dependencies
-# 1.3 : fedora 40, java-17, tomcat-9, 
-TAGS="1 1.3 1.3.0"
+# 1.3 : fedora 40, java-11-openjdk-headless, tomcat-9, postgresql-jdbc-42
+TAGS="1 1.3"

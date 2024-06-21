@@ -30,12 +30,12 @@ is attached at runtime.
 ## additional linux packages
 
 This image is based on Fedora Linux, so additional linux packages should be installed using the `dnf` command.
-Packages that are included: ca-certificates sudo (for CA cert setup), which (gradle appplication support),
-and curl (for manual diagnostics).
+Several fedora packages are installed in addition to OpenJDK; this reduces the need for downstream 
+image builds to install common packages.
 
-Packages that are known to be added by some downstream OpenCADC image builds: wcslib.x86_64, erfa.x86_64. 
-TBD: include this small set of libs in the base image? Reason: avoid downstream install causing untested 
-upgrades in other packages.
+Current extra packages: 
+* network diagnostic tools: curl, openssl, nmap-cat
+* astronomy libs: erfa, wcslib
 
 ## building it
 ```

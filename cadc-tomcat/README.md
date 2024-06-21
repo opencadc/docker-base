@@ -89,14 +89,12 @@ system trust store.
 ## additional linux packages
 
 This image is based on Fedora Linux, so additional linux packages should be installed using the `dnf` command.
-Packages that are included: ca-certificates, sudo (for CA cert setup), and curl (for manual diagnostics). In
-addition, the PostgreSQL JDBC driver (postgresql-jdbc) is installed and symlinked into the tomcat
-server classpath and can be used in a a connection pool declared in the context.xml file). Other open source
-JDBC drivers could be included (TBD).
+Several fedora packages are installed in addition to OpenJDK and tomcat; this reduces the need for downstream 
+image builds to install common packages.
 
-Packages that are known to be added by some downstream OpenCADC image builds: wcslib.x86_64, erfa.x86_64.
-TBD: include this small set of libs in the base image? Reason: avoid downstream install causing untested 
-upgrades in other packages.
+Current extra packages: 
+* network diagnostic tools: curl, openssl, nmap-cat
+* astronomy libs: erfa, wcslib
 
 ## building it
 ```
