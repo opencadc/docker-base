@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# log to external
+LOGDIR=/logs
+LOG=$LOGDIR/do-init.log
+
+touch $LOG
+
+echo -n "START: "
+date 
+
+INITDB=0
+
+if [ -e /var/lib/pgsql/${PG}/data/postgresql.conf ]; then
+    echo "do-init: detected existing setup... skipping database init"
+else
+    INITDB=1
+fi
+
+if [ $INITDB == 1 ]; then
+    # change ownership of injected config files
+    chown -R postgres.postgres /var/lib/pgsql/${PG}/*
+    su -l postgres -c '/bin/bash /usr/local/bin/pgdb-init-postgres.sh'
+fi
+
+# start postgresql server
+su -l postgres -c '/usr/pgsql-15/bin/postmaster -D /var/lib/pgsql/15/data' > $LOGDIR/postgresql.log &
+
+sleep 6
+if [ $INITDB == 1 ]; then
+    if [ -e /config/init-content-schemas.sh ]; then
+        cp /config/init-content-schemas.sh /usr/local/bin/
+        # create standard user(s), database(s), schema(s)
+        su -l postgres -c '/bin/bash /usr/local/bin/pgdb-init-content.sh'
+    else
+        echo "not found: /config/init-content-schemas.sh"
+    fi
+fi
+
+echo -n "init DONE: "
+date
+
+echo "waiting for postmaster to terminate..."
+wait
+echo "wait returned... exiting"
