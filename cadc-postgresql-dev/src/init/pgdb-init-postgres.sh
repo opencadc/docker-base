@@ -2,9 +2,10 @@
 
 ## this script runs on the container (as postgres) before the postgres server starts ##
 
-PGBASE=/var/lib/pgsql/10
+VER=15
+PGBASE=/var/lib/pgsql/$VER
 
-/usr/pgsql-10/bin/initdb -D $PGBASE/data --encoding=UTF8 --lc-collate=C --lc-ctype=C
+/usr/pgsql-${VER}/bin/initdb -D $PGBASE/data --encoding=UTF8 --lc-collate=C --lc-ctype=C
 
 ## modified config files are provided by the container in the $PGBASE dir
 for cf in $PGBASE/*.conf; do

@@ -1,11 +1,15 @@
 # base cadc-dev-postgresql image
 
-## Expected deployment
+# current version
+The current version: **postgresql15-server postgresql15-contrib pgsphere-1.4.2**. The minor version depends on
+what is currently available from `postgresql.org` at build time.
+
+Builds for older versions of postgresql-server and pgsphere are no longer kept because they
+require maintenance and it isn noit worth the effort or complexity.
+
+## expected deployment
 This postgresql instance is designed for development support and has a very low level of
 security. 
-
-Note: the PostgreSQL 10.x build includes the pgsphere extension.
-TODO: add pgsphere extension to the PostgreSQL 12.x build once there is an rpm available from CADC.
 
 ## databases
 On startup, the following user accounts are created (name : password):
@@ -31,25 +35,23 @@ DATABASES="db1 db2 ..."
 SCHEMAS="schema1 schema2 ..."
 ```
 
-Like the TAP-related schemas, all content schemas are created in each dcatabnase. At least one 
+Like the TAP-related schemas, all content schemas are created in each database. At least one 
 database and one schema is needed to start a useful postgresql server. The `cadmin` account will 
 have full authorization in these "content" schema(s).
 
-# PostgreSQL 12.x
-
 ## building it 
 ```
-docker build -t cadc-postgresql-dev -f Dockerfile.pg12 .
+docker build -t cadc-postgresql-dev -f Dockerfile .
 ```
 
 ## checking it
 ```
-docker run -it cadc-postgresql-dev:latest /bin/bash
+docker run -rm -it cadc-postgresql-dev:latest /bin/bash
 ```
 
 ## running it
 ```
-docker run -d --volume=/path/to/config:/config:ro --volume=/path/to/logs:/logs:rw --name pg12db cadc-postgresql-dev:latest
+docker run -d --volume=/path/to/config:/config:ro --volume=/path/to/logs:/logs:rw --name pg15test cadc-postgresql-dev:latest
 ```
 
 One can expose the postgres server port (-p {external http port}:5432) or access it from an application 

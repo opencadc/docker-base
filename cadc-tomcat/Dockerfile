@@ -1,4 +1,4 @@
-FROM fedora:37
+FROM fedora:40
 
 # MAINTAINER deprecated but upstream fedora image still has it
 LABEL org.opencontainers.image.authors="pdowler.cadc@gmail.com" \
@@ -14,10 +14,9 @@ RUN groupadd --gid 8675309 tomcat \
 # install open source JDBC driver(s)
 # install open source astronomy libraries needed by opencadc JNI libs
 # install minimal set of diagnostics tools: mainly for network connectivity
-RUN dnf install -y java-11-openjdk-headless.x86_64 tomcat.noarch ca-certificates sudo \
+RUN dnf install -y java-21-openjdk-headless.x86_64 tomcat.noarch ca-certificates sudo \
     && dnf install -y postgresql-jdbc \
     && dnf install -y wcslib erfa curl openssl nmap-ncat \
-    && rpm -e --nodeps java-17-openjdk-headless.x86_64 \
     && dnf clean all
 
 # link jdbc driver(s) into tomcat lib

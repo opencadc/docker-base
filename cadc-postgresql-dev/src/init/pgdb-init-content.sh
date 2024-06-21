@@ -3,15 +3,16 @@
 ## this scripts runs in the container (as postgres) after the postgres process is started ##
 
 ## create accounts
-psql --command "CREATE USER cadmin   WITH ENCRYPTED PASSWORD 'pw-cadmin'"
+psql --command "CREATE USER cadmin  WITH ENCRYPTED PASSWORD 'pw-cadmin'"
 psql --command "CREATE USER tapuser WITH ENCRYPTED PASSWORD 'pw-tapuser';"
 psql --command "CREATE USER tapadm  WITH ENCRYPTED PASSWORD 'pw-tapadm';"
 
-DATABASES=""
-SCHEMAS=""
-. /config/init-content-schemas.sh
+. /usr/local/bin/init-content-schemas.sh
 
-for DBNAME in $DATABASES; do
+echo "catalogs: $CATALOGS"
+echo "content schemas: $SCHEMAS"
+for DBNAME in $CATALOGS; do
+    echo "create db: $DBNAME"
     createdb $DBNAME
 
     ## enable extensions: citext pgsphere
@@ -24,7 +25,6 @@ for DBNAME in $DATABASES; do
     psql -d $DBNAME --command "CREATE SCHEMA tap_upload AUTHORIZATION tapuser;"
     
     ## create content schema(s)
-    echo "content schemas: $SCHEMAS"
     for SN in $SCHEMAS; do
         echo "create schema: $SN"
         psql -d $DBNAME --command "CREATE SCHEMA $SN AUTHORIZATION cadmin;"
