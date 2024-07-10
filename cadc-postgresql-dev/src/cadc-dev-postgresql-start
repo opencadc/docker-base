@@ -19,7 +19,7 @@ fi
 
 if [ $INITDB == 1 ]; then
     # change ownership of injected config files
-    chown -R postgres.postgres /var/lib/pgsql/${PG}/*
+    chown -R postgres:postgres /var/lib/pgsql/${PG}/*
     su -l postgres -c '/bin/bash /usr/local/bin/pgdb-init-postgres.sh'
 fi
 

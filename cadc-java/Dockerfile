@@ -1,11 +1,9 @@
-FROM fedora:37
+FROM fedora:40
 
 # MAINTAINER deprecated but upstream fedora image still has it
-LABEL org.opencontainers.image.authors="pdowler.cadc@gmail.com" \
-	maintainer="pdowler.cadc@gmail.com"
+LABEL org.opencontainers.image.authors="pdowler.cadc@gmail.com" maintainer="pdowler.cadc@gmail.com"
 
-
-# create unpriviledged user:group with known uid:gid
+# create opencadc user:group with known uid:gid
 RUN groupadd --gid 8675309 opencadc \
     && useradd --uid 8675309 --home-dir / --shell /sbin/nologin \
         --no-create-home --no-user-group --no-log-init opencadc
