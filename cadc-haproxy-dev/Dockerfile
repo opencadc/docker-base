@@ -1,7 +1,6 @@
-FROM centos:7
+FROM fedora:40
 
-RUN yum -y update && yum install -y haproxy rsyslog && yum clean all
-ENV OPENSSL_ALLOW_PROXY_CERTS=1
+RUN dnf -y install haproxy rsyslog && dnf clean all
 
 # set up the configuration for rsyslog. haproxy requires it for logging
 COPY src/rsyslog/rsyslog.conf /etc/rsyslog.conf
