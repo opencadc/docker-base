@@ -22,5 +22,5 @@ jobs:
     - name: Build cadc-postgresql-dev
       run: cd cadc-postgresql-dev && docker build . --file Dockerfile --tag cadc-postgresql-dev:$(date +%s)
     
-      #- name: Build cadc-haproxy-dev
-      #run: cd cadc-haproxy-dev && docker build . --file Dockerfile --tag cadc-haproxy-dev:$(date +%s)
+    - name: Build cadc-haproxy-dev
+      run: cd cadc-haproxy-dev && docker build . --file Dockerfile --tag cadc-haproxy-dev:$(date +%s)
