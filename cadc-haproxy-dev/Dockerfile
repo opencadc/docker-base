@@ -7,7 +7,7 @@ RUN dnf -y install haproxy rsyslog && dnf clean all
 COPY src/rsyslog/rsyslog_haproxy.conf /etc/rsyslog.d/haproxy.conf
 
 # set config for haproxy
-#COPY src/haproxy/haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
+COPY src/haproxy/haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
 
 RUN mkdir /logs
 
