@@ -28,7 +28,7 @@ else
 fi
 
 if [ -e $CONFDIR/haproxy.cfg ]; then
-    cp $CONFDIR/haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
+    cp $CONFDIR/haproxy.cfg /etc/haproxy/haproxy.cfg
     echo "Using custom haproxy.cfg found in $CONFDIR" >> $LOG
 fi
        
@@ -36,5 +36,5 @@ echo -n "init DONE: " >> $LOG
 date >> $LOG
 
 # run on foreground
-/usr/sbin/haproxy -f /usr/local/etc/haproxy/haproxy.cfg  >> $LOG
+/usr/sbin/haproxy -f /etc/haproxy/haproxy.cfg  >> $LOG
 
