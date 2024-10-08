@@ -8,15 +8,12 @@ number of features to be customized:
     1. /config/server-cert.pem is the server certificate (required)
     2. /config/cacerts is a directory containing CA certificates that should be added to the CA bundle if not part of
     the default bundle (optional)
-    3. /config/haproxy.cfg overrides the default haproxy configuration (optional)
-
-The default haproxy container is linked with the backend container at startup and uses the Docker internal networking.
-Therefore, no ports need to be exposed on the backend container.
+    3. /config/haproxy.cfg overrides the default haproxy configuration (recommended)
 
 The log messages go to /logs/haproxy.log on the container and can be directed to the host by mounting the
 container /logs directory.
 
-Note: This container cannot handle multiple backend containers/services.
+The default haproxy.cfg specifies a single back end at `cadc-service:8080` (see below).
 
 ## building it
 ```
@@ -28,15 +25,13 @@ docker build -t cadc-haproxy-dev -f Dockerfile .
 docker run --rm -it cadc-haproxy-dev:latest /bin/bash
 ```
 
-## running it with another container as back end: "backend-container-name"
+## running it
 ```
-docker run --rm --volume=<path-to-external-logs>:/logs:rw --volume=<path-to-server-cert>:/config:ro -p 443:443 --name haproxy cadc-haproxy-dev:latest
+docker run --rm --volume=<path-to-external-logs>:/logs:rw --volume=<path-to-server-cert>:/config:ro --name haproxy cadc-haproxy-dev:latest
 ```
-Other options like `--link <backend-container-name>:cadc-service` could be used with the default haproxy.cfg to
-have haproxy forward requests to a single back end container (e.g. for testing).
+Optional: expose the https port (443) on the host: `-p 443:443`
 
-## test some functionality with the configuration in /test that uses httpbin.org as a backend
-curl -E <user-cert> https://<host>/headers
+Optional: use the default haproxy.cfg and a single back end container: `--link <backend-container-name>:cadc-service` 
 
 ## attach to an existing running container
 docker exec -it haproxy /bin/bash
