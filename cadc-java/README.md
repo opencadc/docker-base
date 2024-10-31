@@ -1,5 +1,7 @@
 # base cadc-java image
 
+published image: `images.opencadc.org/library/cadc-java:{version}`
+
 Base image with Java (currently 8) intended for Java applications. The goal is for child 
 images to simply add the application code and leave the rest to runtime deployment.
 
