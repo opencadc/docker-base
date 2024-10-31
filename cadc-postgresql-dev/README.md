@@ -1,17 +1,19 @@
 # base cadc-dev-postgresql image
+ 
+published image: `images.opencadc.org/library/cadc-postgresql-dev:{version}`
 
 # current version
 The current version: **postgresql15-server postgresql15-contrib pgsphere-1.4.2**. The minor version depends on
 what is currently available from `postgresql.org` at build time.
 
 Builds for older versions of postgresql-server and pgsphere are no longer kept because they
-require maintenance and it isn noit worth the effort or complexity.
+require maintenance and it is not worth the effort or complexity.
 
 ## expected deployment
 This postgresql instance is designed for development support and has a very low level of
 security. 
 
-## databases
+## accounts 
 On startup, the following user accounts are created (name : password):
 ```
 cadmin  : pw-cadmin

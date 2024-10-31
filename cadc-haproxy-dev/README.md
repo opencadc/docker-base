@@ -1,8 +1,10 @@
 # base cadc-haproxy-dev image
 
+published image: `images.opencadc.org/dev-only/cadc-haproxy-dev:{version}`
+
 ## Expected deployment
 This is a basic haproxy image that can be used as a front end to a container. It mimics the one used in the CADC systems,
-hence the choices of components and configuration. Mounting the container /conf directory to the local host is
+hence the choices of components and configuration. Mounting the container /config directory to the local host is
 required for configuring the server certificate but it also allows a
 number of features to be customized:
     1. /config/server-cert.pem is the server certificate (required)
