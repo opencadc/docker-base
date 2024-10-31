@@ -1,6 +1,6 @@
 # base cadc-dev-postgresql image
  
-published image: `images.opencadc.org/library/cadc-postgresql-dev:{version}`
+published image: `images.opencadc.org/dev-only/cadc-postgresql-dev:{version}`
 
 # current version
 The current version: **postgresql15-server postgresql15-contrib pgsphere-1.4.2**. The minor version depends on
