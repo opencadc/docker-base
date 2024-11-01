@@ -57,7 +57,7 @@ docker run --rm -it cadc-postgresql-dev:latest /bin/bash
 ```
 
 ## running it
-To mount the config directorey containing `init-content-schemas.sh`:
+To mount the config directory containing `init-content-schemas.sh`:
 ```
 docker run -d --volume=/path/to/config:/config:ro --name pg15test cadc-postgresql-dev:latest
 ```
