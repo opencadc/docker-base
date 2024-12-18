@@ -10,6 +10,11 @@ echo "$TS $SELF START"
 echo "user: $USER"
 echo "home: $HOME"
 
+if [ -e /VERSION ]; then
+    VER=$(grep ^VER /VERSION | awk -F '=' '{print $2}')
+    echo "image version: $VER"
+fi
+
 if [ -e $CONFDIR/cacerts ]; then
     echo "Configure CA bundle with extra certificates: $CONFDIR/cacerts"
     cp $CONFDIR/cacerts/* /etc/pki/ca-trust/source/anchors/
