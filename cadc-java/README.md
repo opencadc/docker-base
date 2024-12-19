@@ -31,7 +31,7 @@ with the current version number.
 
 ## logging
 
-Log output from the application is dumped to stand output and the deployment is responsible 
+Log output from the application is dumped to standard output and the deployment is responsible 
 for capturing this output. 
 
 ## configuration
