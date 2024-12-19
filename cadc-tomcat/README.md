@@ -6,21 +6,25 @@ Base image with Java (currently 11) and Tomcat (9) intended for deploying web se
 images to simply add a war file to /usr/share/tomcat/webapps and leave the rest to runtime deployment. This 
 image can be run as the user "tomcat" (see below).
 
-Optional: if the child image includes a file named `VERSION` with a line like
-```
-VER=1.2.3
-```
-specifiying the image version, then the container will log this version during startup. The
-default startup logs some information about the runtime and will include this between the
-START and DONE lines, e.g.:
+Optional: if the child image sets and ENV variable named `IMAGE_VERSION` in the image the 
+container will log this version during startup. The default startup logs some information 
+about the runtime and will include this between the START and DONE lines, e.g.:
 ```
 {timestamp} cadc-tomcat-start START
 user: tomcat
 ...
-image version: {VER}
+image version: 1.2.3
 ...
 {timestamp} cadc-tomcat-start DONE
 ```
+
+The recommended approach is to add this to an application's Dockerfile:
+```
+ARG IMAGE_VERSION=unknown
+ENV IMAGE_VERSION=$IMAGE_VERSION
+```
+and then use `docker build --buildarg IMAGE_VERSION=$VER ...` to override the default value 
+with the current version number.
 
 ## Expected deployment
 This tomcat instance is expected to have a proxy (HAproxy, apache, nginx) in front that performs

@@ -9,11 +9,7 @@ TS=$(date)
 echo "$TS $SELF START"
 echo "user: $USER"
 echo "home: $HOME"
-
-if [ -e /VERSION ]; then
-    VER=$(grep ^VER /VERSION | awk -F '=' '{print $2}')
-    echo "image version: $VER"
-fi
+echo "image version: $IMAGE_VERSION"
 
 if [ -f $CONFDIR/catalina.properties ]; then
     echo "Configure tomcat with extra properties: $CONFDIR/catalina.properties"
