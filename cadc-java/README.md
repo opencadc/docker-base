@@ -23,7 +23,7 @@ image version: 1.2.3
 
 The recommended approach is to add this to an application's Dockerfile:
 ```
-ARG IMAGE_VERSION=unknown
+ARG IMAGE_VERSION
 ENV IMAGE_VERSION=$IMAGE_VERSION
 ```
 and then use `docker build --buildarg IMAGE_VERSION=$VER ...` to override the default value 
