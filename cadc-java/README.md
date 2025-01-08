@@ -9,7 +9,7 @@ Child images should use the  Dockerfile `CMD` option to specify the startup comm
 the ENTRYPOINT script specified here to run and initialise the environment before starting the
 application.
 
-Optional: if the child image sets and ENV variable named `IMAGE_VERSION` in the image the 
+Optional: if the child image or build sets an ENV variable named `IMAGE_VERSION` in the image the 
 container will log this version during startup. The default startup logs some information 
 about the runtime and will include this between the START and DONE lines, e.g.:
 ```
@@ -20,14 +20,6 @@ image version: 1.2.3
 ...
 {timestamp} cadc-java-init DONE
 ```
-
-The recommended approach is to add this to an application's Dockerfile:
-```
-ARG IMAGE_VERSION
-ENV IMAGE_VERSION=$IMAGE_VERSION
-```
-and then use `docker build --buildarg IMAGE_VERSION=$VER ...` to override the default value 
-with the current version number.
 
 ## logging
 
