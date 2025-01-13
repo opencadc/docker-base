@@ -9,6 +9,7 @@ TS=$(date)
 echo "$TS $SELF START"
 echo "user: $USER"
 echo "home: $HOME"
+echo "image version: $IMAGE_VERSION"
 
 if [ -f $CONFDIR/catalina.properties ]; then
     echo "Configure tomcat with extra properties: $CONFDIR/catalina.properties"

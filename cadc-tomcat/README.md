@@ -6,6 +6,18 @@ Base image with Java (currently 11) and Tomcat (9) intended for deploying web se
 images to simply add a war file to /usr/share/tomcat/webapps and leave the rest to runtime deployment. This 
 image can be run as the user "tomcat" (see below).
 
+Optional: if the child image or build sets an ENV variable named `IMAGE_VERSION` in the image the 
+container will log this version during startup. The default startup logs some information 
+about the runtime and will include this between the START and DONE lines, e.g.:
+```
+{timestamp} cadc-tomcat-start START
+user: tomcat
+...
+image version: 1.2.3
+...
+{timestamp} cadc-tomcat-start DONE
+```
+
 ## Expected deployment
 This tomcat instance is expected to have a proxy (HAproxy, apache, nginx) in front that performs
 SSL termination and forwards calls via HTTP on port 8080. Optional client certificates are passed through 

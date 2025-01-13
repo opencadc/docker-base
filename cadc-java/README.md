@@ -9,6 +9,23 @@ Child images should use the  Dockerfile `CMD` option to specify the startup comm
 the ENTRYPOINT script specified here to run and initialise the environment before starting the
 application.
 
+Optional: if the child image or build sets an ENV variable named `IMAGE_VERSION` in the image the 
+container will log this version during startup. The default startup logs some information 
+about the runtime and will include this between the START and DONE lines, e.g.:
+```
+{timestamp} cadc-java-init START
+user: opencadc
+...
+image version: 1.2.3
+...
+{timestamp} cadc-java-init DONE
+```
+
+## logging
+
+Log output from the application is dumped to standard output and the deployment is responsible 
+for capturing this output. 
+
 ## configuration
 
 Runtime configuration is found in /config and includes the following:

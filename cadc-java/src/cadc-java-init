@@ -9,6 +9,7 @@ TS=$(date)
 echo "$TS $SELF START"
 echo "user: $USER"
 echo "home: $HOME"
+echo "image version: $IMAGE_VERSION"
 
 if [ -e $CONFDIR/cacerts ]; then
     echo "Configure CA bundle with extra certificates: $CONFDIR/cacerts"
