@@ -1,5 +1,8 @@
 FROM fedora:40
 
+# MAINTAINER deprecated but upstream fedora image still has it
+LABEL org.opencontainers.image.authors="pdowler.cadc@gmail.com" maintainer="pdowler.cadc@gmail.com"
+
 # external URLs; allow --build-arg switch
 ARG PGDG=https://download.postgresql.org/pub/repos/yum/reporpms/F-40-x86_64/pgdg-fedora-repo-latest.noarch.rpm
 
