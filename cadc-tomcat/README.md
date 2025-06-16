@@ -2,7 +2,7 @@
 
 published image: `images.opencadc.org/library/cadc-tomcat:{version}`
 
-Base image with Java (currently 11) and Tomcat (9) intended for deploying web services. The goal is for child 
+Base image with Java (currently 21) and Tomcat (9) intended for deploying web services. The goal is for child 
 images to simply add a war file to /usr/share/tomcat/webapps and leave the rest to runtime deployment. This 
 image can be run as the user "tomcat" (see below).
 
