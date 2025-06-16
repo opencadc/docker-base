@@ -14,13 +14,13 @@ jobs:
     - uses: actions/checkout@v1
     
     - name: Build cadc-java
-      run: cd cadc-java && docker build . --file Dockerfile --tag cadc-tomcat:$(date +%s)
+      run: cd cadc-java && DOCKER_CONTENT_TRUST=1 docker build . --file Dockerfile --tag cadc-tomcat:$(date +%s)
     
     - name: Build cadc-tomcat
-      run: cd cadc-tomcat && docker build . --file Dockerfile --tag cadc-tomcat:$(date +%s)
+      run: cd cadc-tomcat && DOCKER_CONTENT_TRUST=1 docker build . --file Dockerfile --tag cadc-tomcat:$(date +%s)
     
     - name: Build cadc-postgresql-dev
-      run: cd cadc-postgresql-dev && docker build . --file Dockerfile --tag cadc-postgresql-dev:$(date +%s)
+      run: cd cadc-postgresql-dev && DOCKER_CONTENT_TRUST=1 docker build . --file Dockerfile --tag cadc-postgresql-dev:$(date +%s)
     
     - name: Build cadc-haproxy-dev
-      run: cd cadc-haproxy-dev && docker build . --file Dockerfile --tag cadc-haproxy-dev:$(date +%s)
+      run: cd cadc-haproxy-dev && DOCKER_CONTENT_TRUST=1 docker build . --file Dockerfile --tag cadc-haproxy-dev:$(date +%s)
