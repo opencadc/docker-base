@@ -48,7 +48,7 @@ for a disposable db container.
 
 ## building it 
 ```
-docker build -t cadc-postgresql-dev -f Dockerfile .
+DOCKER_CONTENT_TRUST=1 docker build -t cadc-postgresql-dev -f Dockerfile .
 ```
 
 ## checking it
