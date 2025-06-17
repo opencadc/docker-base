@@ -19,7 +19,7 @@ The default haproxy.cfg specifies a single back end at `cadc-service:8080` (see 
 
 ## building it
 ```
-docker build -t cadc-haproxy-dev -f Dockerfile .
+DOCKER_CONTENT_TRUST=1 docker build -t cadc-haproxy-dev -f Dockerfile .
 ```
 
 ## checking it
