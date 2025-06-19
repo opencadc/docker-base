@@ -1,4 +1,4 @@
-FROM fedora:40
+FROM fedora:42
 
 # MAINTAINER deprecated but upstream fedora image still has it
 LABEL org.opencontainers.image.authors="pdowler.cadc@gmail.com" maintainer="pdowler.cadc@gmail.com"
@@ -11,7 +11,7 @@ RUN groupadd --gid 8675309 opencadc \
 # install required software
 # install open source astronomy libraries needed by opencadc JNI libs
 # install minimal set of diagnostics tools: mainly for network connectivity
-RUN dnf install -y java-11-openjdk-headless.x86_64 ca-certificates sudo which \
+RUN dnf install -y java-21-openjdk-headless ca-certificates sudo which \
     && dnf install -y wcslib erfa curl openssl nmap-ncat \
     && dnf clean all
 

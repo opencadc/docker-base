@@ -1,4 +1,7 @@
-FROM fedora:40
+FROM fedora:42
+
+# MAINTAINER deprecated but upstream fedora image still has it
+LABEL org.opencontainers.image.authors="pdowler.cadc@gmail.com" maintainer="pdowler.cadc@gmail.com"
 
 RUN dnf -y install haproxy && dnf clean all
 
