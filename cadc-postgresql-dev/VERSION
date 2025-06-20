@@ -1,3 +1,4 @@
 # semantic version tags for base containers: major major.minor
-# 1.0 : fedora 40 + postgresql-15.x + pgsphere-1.4.2 
-TAGS="1 1.0"
+# 1.0 : fedora 40 + postgresql-15.x + pgsphere-1.4.2
+# 1.1 : fedora 42 + postgresql-15.x + pgsphere-1.4.2 
+TAGS="1 1.1"
