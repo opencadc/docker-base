@@ -1,4 +1,5 @@
 # semantic version tags for base containers: major major.minor
 # 1.0 : fedora 40 + haproxy
 # 1.1 : fedora 42 + haproxy
-TAGS="1 1.1"
+# 1.2 : fedora 42 + haproxy, amd64 + arm64
+TAGS="1 1.2"

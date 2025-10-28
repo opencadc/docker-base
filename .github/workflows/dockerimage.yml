@@ -11,16 +11,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v3
     
     - name: Build cadc-java
-      run: cd cadc-java && DOCKER_CONTENT_TRUST=1 docker build . --file Dockerfile --tag cadc-tomcat:$(date +%s)
+      run: cd cadc-java && DOCKER_CONTENT_TRUST=1 docker buildx build --platform linux/amd64,linux/arm64 --file Dockerfile --tag cadc-tomcat:$(date +%s) .
     
     - name: Build cadc-tomcat
-      run: cd cadc-tomcat && DOCKER_CONTENT_TRUST=1 docker build . --file Dockerfile --tag cadc-tomcat:$(date +%s)
-    
-    - name: Build cadc-postgresql-dev
-      run: cd cadc-postgresql-dev && DOCKER_CONTENT_TRUST=1 docker build . --file Dockerfile --tag cadc-postgresql-dev:$(date +%s)
+      run: cd cadc-tomcat && DOCKER_CONTENT_TRUST=1 docker buildx build --platform linux/amd64,linux/arm64 --file Dockerfile --tag cadc-tomcat:$(date +%s) .
     
     - name: Build cadc-haproxy-dev
-      run: cd cadc-haproxy-dev && DOCKER_CONTENT_TRUST=1 docker build . --file Dockerfile --tag cadc-haproxy-dev:$(date +%s)
+      run: cd cadc-haproxy-dev && DOCKER_CONTENT_TRUST=1 docker buildx build --platform linux/amd64,linux/arm64 --file Dockerfile --tag cadc-tomcat:$(date +%s) .
+
+    # cadc-postgresql-dev requires a pgsphere rpm which is currently available for amd64 only
+    # cadc-postgresql-dev/Dockerfile hard-coded to install the x86_64 postgresql repository and pgsphere rpm
+    - name: Build cadc-postgresql-dev
+      run: cd cadc-postgresql-dev && DOCKER_CONTENT_TRUST=1 docker docker buildx build --platform linux/amd64 --file Dockerfile --tag cadc-tomcat:$(date +%s) .
+    
