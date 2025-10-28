@@ -29,5 +29,5 @@ jobs:
     # cadc-postgresql-dev requires a pgsphere rpm which is currently available for amd64 only
     # cadc-postgresql-dev/Dockerfile hard-coded to install the x86_64 postgresql repository and pgsphere rpm
     - name: Build cadc-postgresql-dev
-      run: cd cadc-postgresql-dev && DOCKER_CONTENT_TRUST=1 docker docker buildx build --platform linux/amd64 --file Dockerfile --tag cadc-tomcat:$(date +%s) .
+      run: cd cadc-postgresql-dev && DOCKER_CONTENT_TRUST=1 docker buildx build --platform linux/amd64 --file Dockerfile --tag cadc-tomcat:$(date +%s) .
     
