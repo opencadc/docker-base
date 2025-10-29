@@ -112,7 +112,7 @@ Current extra packages:
 
 ## building it
 ```
-DOCKER_CONTENT_TRUST=1 docker build -t cadc-tomcat -f Dockerfile .
+DOCKER_CONTENT_TRUST=1 docker buildx build --platform linux/amd64,linux/arm64 -t cadc-tomcat -f Dockerfile .
 ```
 
 ## checking it

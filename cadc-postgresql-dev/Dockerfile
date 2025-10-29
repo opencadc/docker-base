@@ -9,7 +9,9 @@ ARG PGSERVER="postgresql15-server postgresql15-contrib"
 ARG PGSPHERE=https://ws-cadc.canfar.net/vault/files/pdowler/rpms/pgsphere15-1.4.2-1.fc42.x86_64.rpm
 
 # install repositories, server, extensions
+# temporary work around to mkdir that the rpm used to and should make
 RUN dnf -y install ${PGDG} \
+    && mkdir -p /var/lib/pgsql && chown 26:26 /var/lib/pgsql \
     && dnf -y install ${PGSERVER} ${PGSPHERE} \
     && dnf -y clean all
 
