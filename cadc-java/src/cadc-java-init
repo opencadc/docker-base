@@ -6,10 +6,13 @@ CONFDIR=/config
 USER=$(whoami)
 
 TS=$(date)
+JAVA_VERSION=$(rpm -qa java-21-openjdk-headless)
+
 echo "$TS $SELF START"
 echo "user: $USER"
 echo "home: $HOME"
 echo "image version: $IMAGE_VERSION"
+echo "java version: $JAVA_VERSION"
 
 if [ -e $CONFDIR/cacerts ]; then
     echo "Configure CA bundle with extra certificates: $CONFDIR/cacerts"
