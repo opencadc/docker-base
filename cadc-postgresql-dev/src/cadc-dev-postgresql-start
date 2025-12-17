@@ -6,40 +6,41 @@ LOG=$LOGDIR/do-init.log
 
 touch $LOG
 
-echo -n "START: "
-date 
+echo -n "START: " >> $LOG
+date >> $LOG 
 
 INITDB=0
 
 if [ -e /var/lib/pgsql/${PG}/data/postgresql.conf ]; then
-    echo "do-init: detected existing setup... skipping database init"
+    echo "do-init: detected existing setup... skipping database init" >> $LOG
 else
     INITDB=1
 fi
 
 if [ $INITDB == 1 ]; then
     # change ownership of injected config files
-    chown -R postgres:postgres /var/lib/pgsql/${PG}/*
-    su -l postgres -c '/bin/bash /usr/local/bin/pgdb-init-postgres.sh'
+    chown -R postgres:postgres /var/lib/pgsql/15
+    su -l postgres -c '/bin/bash /usr/local/bin/pgdb-init-postgres.sh' >> $LOG
 fi
 
 # start postgresql server
 su -l postgres -c '/usr/pgsql-15/bin/postmaster -D /var/lib/pgsql/15/data' > $LOGDIR/postgresql.log &
+PGPID=$!
 
 sleep 6
 if [ $INITDB == 1 ]; then
     if [ -e /config/init-content-schemas.sh ]; then
         cp /config/init-content-schemas.sh /usr/local/bin/
         # create standard user(s), database(s), schema(s)
-        su -l postgres -c '/bin/bash /usr/local/bin/pgdb-init-content.sh'
+        su -l postgres -c '/bin/bash /usr/local/bin/pgdb-init-content.sh' >> $LOG
     else
-        echo "not found: /config/init-content-schemas.sh"
+        echo "not found: /config/init-content-schemas.sh" >> $LOG
     fi
 fi
 
-echo -n "init DONE: "
-date
+echo -n "init DONE: " >> $LOG
+date >> $LOG
 
 echo "waiting for postmaster to terminate..."
-wait
+wait $PGPID
 echo "wait returned... exiting"
