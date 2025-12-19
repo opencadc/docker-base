@@ -81,6 +81,8 @@ the context or introduce additional path elements:
 ```
 mv foo.war api#foo.war
 ```
+to deploy as `/api/foo`.
+
 To deploy a service on the root of the server, take advantage of this special tomcat name:
 ```
 mv foo.war ROOT.war
