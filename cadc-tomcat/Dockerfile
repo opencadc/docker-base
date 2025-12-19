@@ -46,11 +46,6 @@ RUN echo JAVA_OPTS=\"-Xms512m -Xmx2048m -XX:+UseParallelGC \$JAVA_OPTS\" >> /etc
 # disable all jar scanning for TLDs
 RUN echo "tomcat.util.scan.StandardJarScanFilter.jarsToSkip=*.jar" >> /etc/tomcat/catalina.properties
 
-# standard welcome page
-RUN mkdir -p /usr/share/tomcat/webapps/ROOT
-COPY src/index.html /usr/share/tomcat/webapps/ROOT/
-RUN chown -R tomcat.tomcat /usr/share/tomcat/webapps/ROOT
-
 COPY src/cadc-tomcat-start /usr/bin/cadc-tomcat-start
 CMD ["/usr/bin/cadc-tomcat-start"]
 

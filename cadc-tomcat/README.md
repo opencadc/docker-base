@@ -77,7 +77,16 @@ discover it from the request for this to work. Some applications may not be _mov
 
 Renaming the war file can take advantage of some tomcat war file naming conventions
 (https://tomcat.apache.org/tomcat-9.0-doc/config/context.html), for example: to rename 
-the context or introduce additional path elements.
+the context or introduce additional path elements:
+```
+mv foo.war api#foo.war
+```
+to deploy as `/api/foo`.
+
+To deploy a service on the root of the server, take advantage of this special tomcat name:
+```
+mv foo.war ROOT.war
+```
 
 ### tomcat.conf
 This optional file contains configuration used by the tomcat startup, e.g.:
