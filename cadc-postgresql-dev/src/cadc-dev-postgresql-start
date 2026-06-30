@@ -11,7 +11,7 @@ date >> $LOG
 
 INITDB=0
 
-if [ -e /var/lib/pgsql/${PG}/data/postgresql.conf ]; then
+if [ -e /var/lib/pgsql/17/data/postgresql.conf ]; then
     echo "do-init: detected existing setup... skipping database init" >> $LOG
 else
     INITDB=1
@@ -19,12 +19,12 @@ fi
 
 if [ $INITDB == 1 ]; then
     # change ownership of injected config files
-    chown -R postgres:postgres /var/lib/pgsql/15
+    chown -R postgres:postgres /var/lib/pgsql/17
     su -l postgres -c '/bin/bash /usr/local/bin/pgdb-init-postgres.sh' >> $LOG
 fi
 
 # start postgresql server
-su -l postgres -c '/usr/pgsql-15/bin/postmaster -D /var/lib/pgsql/15/data' > $LOGDIR/postgresql.log &
+su -l postgres -c '/usr/pgsql-17/bin/postgres -D /var/lib/pgsql/17/data' > $LOGDIR/postgresql.log &
 PGPID=$!
 
 sleep 6
@@ -41,6 +41,6 @@ fi
 echo -n "init DONE: " >> $LOG
 date >> $LOG
 
-echo "waiting for postmaster to terminate..."
+echo "waiting for postmaster to terminate..." >> $LOG
 wait $PGPID
-echo "wait returned... exiting"
+echo "wait returned... exiting" >> $LOG

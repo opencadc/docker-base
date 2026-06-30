@@ -2,7 +2,7 @@
 
 ## this script runs on the container (as postgres) before the postgres server starts ##
 
-VER=15
+VER=17
 PGBASE=/var/lib/pgsql/$VER
 
 /usr/pgsql-${VER}/bin/initdb -D $PGBASE/data --encoding=UTF8 --lc-collate=C --lc-ctype=C
