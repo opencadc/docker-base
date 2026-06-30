@@ -3,7 +3,7 @@
 published image: `images.opencadc.org/dev-only/cadc-postgresql-dev:{version}`
 
 # current version
-The current version: **postgresql15-server postgresql15-contrib pgsphere-1.4.2**. The minor version depends on
+The current version: **postgresql17-server postgresql17-contrib pgsphere-1.5.2**. The minor version depends on
 what is currently available from `postgresql.org` at build time.
 
 Builds for older versions of postgresql-server and pgsphere are no longer kept because they
@@ -59,13 +59,16 @@ docker run --rm -it cadc-postgresql-dev:latest /bin/bash
 ## running it
 To mount the config directory containing `init-content-schemas.sh`:
 ```
-docker run -d --volume=/path/to/config:/config:ro --name pg15test cadc-postgresql-dev:latest
+docker run -d \
+    --volume=$(pwd)/config:/config:ro \
+    --volume=$(pwd)/logs:/logs:rw \
+    --name pg17test cadc-postgresql-dev:latest
 ```
 or to mount the single config file:
 ```
 docker run -d \
-    --mount type=bind,source=$(pwd)/init-example.sh,target=/config/init-content-schemas.sh,readonly \
-    --name pg15test cadc-postgresql-dev:latest
+    --mount type=bind,source=$(pwd)/config/init-content-schemas.sh,target=/config/init-content-schemas.sh,readonly \
+    --name pg17test cadc-postgresql-dev:latest
 ```
 
 One can expose the postgres server port (-p {external port}:5432) or access it from an application 
