@@ -18,6 +18,7 @@ RUN dnf -y install ${PGDG} \
 RUN mkdir -p /config /logs /var/lib/pgsql/17
 COPY src/config/* /var/lib/pgsql/17/
 COPY src/init/* /usr/local/bin/
+RUN ln -s /usr/pgsql-17/bin/pg_isready /usr/local/bin/pg_isready
 
 COPY src/cadc-dev-postgresql-start /usr/bin/
 CMD ["/usr/bin/cadc-dev-postgresql-start"]
