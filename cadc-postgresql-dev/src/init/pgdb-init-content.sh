@@ -3,10 +3,13 @@
 ## this scripts runs in the container (as postgres) after the postgres process is started ##
 
 ## create accounts
+# TODO: get secrets from config or environment?
 psql --command "CREATE USER cadmin  WITH ENCRYPTED PASSWORD 'pw-cadmin'"
 psql --command "CREATE USER tapuser WITH ENCRYPTED PASSWORD 'pw-tapuser';"
 psql --command "CREATE USER tapadm  WITH ENCRYPTED PASSWORD 'pw-tapadm';"
 
+# configured catalogs and schemas
+# TODO: make this optional and support CATALOGS and SCHEMAS from environment?
 . /config/init-content-schemas.sh
 
 echo "catalogs: $CATALOGS"
