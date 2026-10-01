@@ -1,2 +1,0 @@
-
-opencadc ALL=(ALL) NOPASSWD: /usr/bin/update-ca-trust

@@ -11,10 +11,11 @@ RUN groupadd --gid 8675309 tomcat \
 # install required software
 # install open source JDBC driver(s)
 # install open source astronomy libraries needed by opencadc JNI libs
+# install filesystem utils
 # install minimal set of diagnostics tools: mainly for network connectivity
-RUN dnf install -y tomcat.noarch ca-certificates sudo which gawk \
+RUN dnf install -y tomcat.noarch ca-certificates which gawk \
     && dnf install -y postgresql-jdbc \
-    && dnf install -y wcslib erfa curl openssl nmap-ncat \
+    && dnf install -y wcslib erfa curl openssl nmap-ncat acl attr \
     && dnf clean all
 
 # link jdbc driver(s) into tomcat lib
@@ -24,20 +25,28 @@ RUN cd /usr/share/tomcat/lib/ \
 # system settings and permissions
 COPY src/nofiles.conf /etc/security/limits.d/
 COPY src/server.xml /etc/tomcat/server.xml
-COPY src/tomcat-sudo-perms /etc/sudoers.d/
 
-RUN chgrp tomcat /etc/pki/ca-trust/source/anchors \
-    && chmod 775 /etc/pki/ca-trust/source/anchors \
-    && chmod 440 /etc/sudoers.d/tomcat-sudo-perms \
-    && chmod 664 /etc/tomcat/catalina.properties \
-    && chmod 664 /etc/tomcat/tomcat.conf
+RUN chmod 664 /etc/tomcat/catalina.properties /etc/tomcat/tomcat.conf
+
+# allow tomcat to install CA certs and run update-ca-trust at startup
+RUN chgrp -R tomcat \
+        /etc/pki/ca-trust \
+        /etc/pki/tls \
+        /etc/pki/java \
+        /etc/ssl \
+    && chmod -R g+w \
+        /etc/pki/ca-trust \
+        /etc/pki/tls \
+        /etc/pki/java \
+        /etc/ssl \
+    && chown tomcat /etc/pki/ca-trust/extracted/pem/directory-hash
+
+# cleanup existing files
+RUN find /etc/pki/ca-trust/extracted -type f -delete
 
 # hide tomcat version in error pages
 RUN mkdir -p /usr/share/tomcat/lib/org/apache/catalina/util
 COPY src/ServerInfo.properties /usr/share/tomcat/lib/org/apache/catalina/util
-
-## see https://bugzilla.redhat.com/show_bug.cgi?id=1773148
-RUN touch /etc/sudo.conf && echo "Set disable_coredump false" > /etc/sudo.conf
 
 # JVM settings
 RUN echo JAVA_OPTS=\"-Xms512m -Xmx2048m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 \$JAVA_OPTS\" >> /etc/tomcat/tomcat.conf \

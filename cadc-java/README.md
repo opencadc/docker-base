@@ -53,6 +53,7 @@ Several fedora packages are installed in addition to OpenJDK; this reduces the n
 image builds to install common packages.
 
 Current extra packages: 
+* filesystem tools: acl attr
 * network diagnostic tools: curl, openssl, nmap-cat
 * astronomy libs: erfa, wcslib
 
