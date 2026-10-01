@@ -1,2 +1,2 @@
 CATALOGS="cadctest content"
-SCHEMAS="dbversion cred caom2 inventory"
+SCHEMAS="dbversion caom2 inventory"

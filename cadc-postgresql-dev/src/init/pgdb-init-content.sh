@@ -7,7 +7,7 @@ psql --command "CREATE USER cadmin  WITH ENCRYPTED PASSWORD 'pw-cadmin'"
 psql --command "CREATE USER tapuser WITH ENCRYPTED PASSWORD 'pw-tapuser';"
 psql --command "CREATE USER tapadm  WITH ENCRYPTED PASSWORD 'pw-tapadm';"
 
-. /usr/local/bin/init-content-schemas.sh
+. /config/init-content-schemas.sh
 
 echo "catalogs: $CATALOGS"
 echo "content schemas: $SCHEMAS"
