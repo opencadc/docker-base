@@ -1,5 +1,8 @@
 #!/bin/bash
 
+export PGBASE=/var/lib/pgsql
+export VER=17
+
 # log to external
 LOGDIR=/logs
 LOG=$LOGDIR/do-init.log
@@ -11,28 +14,32 @@ date >> $LOG
 
 INITDB=0
 
-if [ -e /var/lib/pgsql/17/data/postgresql.conf ]; then
+if [ -e $PGBASE/$VER/data/postgresql.conf ]; then
     echo "do-init: detected existing setup... skipping database init" >> $LOG
 else
     INITDB=1
 fi
 
 if [ $INITDB == 1 ]; then
-    # change ownership of injected config files
-    chown -R postgres:postgres /var/lib/pgsql/17
-    su -l postgres -c '/bin/bash /usr/local/bin/pgdb-init-postgres.sh' >> $LOG
+    echo "initialising server..." >> $LOG
+    /usr/local/bin/pgdb-init-postgres.sh >> $LOG
 fi
 
-# start postgresql server
-su -l postgres -c '/usr/pgsql-17/bin/postgres -D /var/lib/pgsql/17/data' > $LOGDIR/postgresql.log &
+echo "start postgresql server..." >> $LOG
+/usr/pgsql-${VER}/bin/postgres -D $PGBASE/$VER/data >& $LOGDIR/postgresql.log &
 PGPID=$!
+echo "start postgresql server... $PGPID" >> $LOG
 
+echo "waiting for postgresql server to become ready..." >> $LOG
+# TODO: loop and call pg_isready until ready?
 sleep 6
+
+
 if [ $INITDB == 1 ]; then
+    echo "initialising content..." >> $LOG
     if [ -e /config/init-content-schemas.sh ]; then
-        cp /config/init-content-schemas.sh /usr/local/bin/
         # create standard user(s), database(s), schema(s)
-        su -l postgres -c '/bin/bash /usr/local/bin/pgdb-init-content.sh' >> $LOG
+        /usr/local/bin/pgdb-init-content.sh >> $LOG
     else
         echo "not found: /config/init-content-schemas.sh" >> $LOG
     fi

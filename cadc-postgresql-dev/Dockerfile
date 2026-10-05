@@ -6,20 +6,20 @@ LABEL org.opencontainers.image.authors="pdowler.cadc@gmail.com" maintainer="pdow
 # external URLs; allow --build-arg switch
 ARG PGDG=https://download.postgresql.org/pub/repos/yum/reporpms/F-43-x86_64/pgdg-fedora-repo-latest.noarch.rpm
 ARG PGSERVER="postgresql17-server postgresql17-contrib"
-ARG PGSPHERE=https://ws-cadc.canfar.net/vault/files/pdowler/rpms/pgsphere17-1.5.2-1.fc43.x86_64.rpm
+ARG PGSPHERE=https://cadc-west-01.canfar.net/vault/files/pdowler/rpms/pgsphere17-1.5.2-1.fc43.x86_64.rpm
 
 # install repositories, server, extensions
-# temporary work around to mkdir that the rpm used to and should make
 RUN dnf -y install ${PGDG} \
-    && mkdir -p /var/lib/pgsql && chown 26:26 /var/lib/pgsql \
     && dnf -y install ${PGSERVER} ${PGSPHERE} \
     && dnf -y clean all
 
-RUN mkdir -p /config /logs /var/lib/pgsql/17
-COPY src/config/* /var/lib/pgsql/17/
+RUN mkdir -p /config /logs
+COPY src/config/* /var/lib/pgsql/
 COPY src/init/* /usr/local/bin/
+
+RUN chown postgres:postgres /logs /var/lib/pgsql/*.conf
+
 RUN ln -s /usr/pgsql-17/bin/pg_isready /usr/local/bin/pg_isready
 
 COPY src/cadc-dev-postgresql-start /usr/bin/
 CMD ["/usr/bin/cadc-dev-postgresql-start"]
-

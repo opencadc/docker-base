@@ -43,8 +43,14 @@ have full authorization in these "content" schema(s).
 
 See example below for how to provide the `init-content-schemas.sh` at startup.
 
-The postgresql server is confgured to log to `/logs` inside the container. That's normally fine
-for a disposable db container.
+The postgresql server is confgured to log startup information to file(s) in `/logs` inside the container. 
+That's normally fine for a disposable db container.
+
+The standard `pg_isready` command is available in the PATH (symlink in /usr/local/bin).
+
+The data for the live server is located in `/var/lib/pgsql/17/data`. If you want the content to
+be persisted outside the container you can mount a volume here; the internal postgres user (uid=gid=26)
+must **own** the mounted directory.
 
 ## building it 
 ```
@@ -59,18 +65,23 @@ docker run --rm -it cadc-postgresql-dev:latest /bin/bash
 ## running it
 To mount the config directory containing `init-content-schemas.sh`:
 ```
-docker run -d \
+docker run -d --user postgres:postgres \
     --volume=$(pwd)/config:/config:ro \
-    --volume=$(pwd)/logs:/logs:rw \
     --name pg17test cadc-postgresql-dev:latest
 ```
 or to mount the single config file:
 ```
-docker run -d \
+docker run -d --user postgres:postgres \
     --mount type=bind,source=$(pwd)/config/init-content-schemas.sh,target=/config/init-content-schemas.sh,readonly \
     --name pg17test cadc-postgresql-dev:latest
 ```
 
-One can expose the postgres server port (-p {external port}:5432) or access it from an application 
-on the same host via the private IP address.
+To also mount a persistent volume for the database content:
+```
+docker run -d --user postgres:postgres \
+    --volume=$(pwd)/config:/config:ro \
+    --volume=$(pwd)/persistent-volume/data:/var/lib/pgsql/17/data:rw \
+    --name pg17test cadc-postgresql-dev:latest
+```
+
 
