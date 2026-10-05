@@ -36,9 +36,6 @@ RUN chgrp -R opencadc \
         /etc/ssl \
     && chown opencadc /etc/pki/ca-trust/extracted/pem/directory-hash
 
-# cleanup existing files
-RUN find /etc/pki/ca-trust/extracted -type f -delete
-
 # JVM settings
 ENV JAVA_OPTS="-Xms512m -Xmx2048m -XX:+UseParallelGC -XX:+HeapDumpOnOutOfMemoryError -XX:OnError='cat hs_err_pid%p.log'"
 

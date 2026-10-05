@@ -41,9 +41,6 @@ RUN chgrp -R tomcat \
         /etc/ssl \
     && chown tomcat /etc/pki/ca-trust/extracted/pem/directory-hash
 
-# cleanup existing files
-RUN find /etc/pki/ca-trust/extracted -type f -delete
-
 # hide tomcat version in error pages
 RUN mkdir -p /usr/share/tomcat/lib/org/apache/catalina/util
 COPY src/ServerInfo.properties /usr/share/tomcat/lib/org/apache/catalina/util
