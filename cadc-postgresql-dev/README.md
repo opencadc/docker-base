@@ -2,6 +2,11 @@
  
 published image: `images.opencadc.org/dev-only/cadc-postgresql-dev:{version}`
 
+# CHANGES
+
+## version 1.3 aka 1
+- change so container must be run as `--user postgres:postgres` rather than `root` (using su to start PG)
+
 # current version
 The current version: **postgresql17-server postgresql17-contrib pgsphere-1.5.2**. The minor version depends on
 what is currently available from `postgresql.org` at build time.
