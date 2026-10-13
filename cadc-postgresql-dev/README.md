@@ -4,7 +4,7 @@ published image: `images.opencadc.org/dev-only/cadc-postgresql-dev:{version}`
 
 # CHANGES
 
-## version 1.3 aka 1
+## version 2.0 aka 2:
 - change so container must be run as `--user postgres:postgres` rather than `root` (using su to start PG)
 
 # current version
