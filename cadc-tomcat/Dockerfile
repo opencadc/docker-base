@@ -47,7 +47,7 @@ COPY src/ServerInfo.properties /usr/share/tomcat/lib/org/apache/catalina/util
 
 # JVM settings
 RUN echo JAVA_OPTS=\"-Xms512m -Xmx2048m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 \$JAVA_OPTS\" >> /etc/tomcat/tomcat.conf \
-    && echo JAVA_OPTS=\"-XX:+HeapDumpOnOutOfMemoryError -XX:OnError=\'cat hs_err_pid%p.log\' \$JAVA_OPTS\" >> /etc/tomcat/tomcat.conf
+    && echo JAVA_OPTS=\"-XX:+HeapDumpOnOutOfMemoryError -XX:+ExitOnOutOfMemoryError -XX:OnError=\'cat hs_err_pid%p.log\' \$JAVA_OPTS\" >> /etc/tomcat/tomcat.conf
 
 # disable all jar scanning for TLDs
 RUN echo "tomcat.util.scan.StandardJarScanFilter.jarsToSkip=*.jar" >> /etc/tomcat/catalina.properties
