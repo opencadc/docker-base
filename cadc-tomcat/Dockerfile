@@ -10,12 +10,11 @@ RUN groupadd --gid 8675309 tomcat \
 
 # install required software
 # install open source JDBC driver(s)
-# install open source astronomy libraries needed by opencadc JNI libs
 # install filesystem utils
 # install minimal set of diagnostics tools: mainly for network connectivity
 RUN dnf install -y tomcat.noarch ca-certificates which gawk \
     && dnf install -y postgresql-jdbc \
-    && dnf install -y wcslib erfa curl openssl nmap-ncat acl attr \
+    && dnf install -y curl openssl nmap-ncat acl attr \
     && dnf clean all
 
 # link jdbc driver(s) into tomcat lib
@@ -45,9 +44,7 @@ RUN chgrp -R tomcat \
 RUN mkdir -p /usr/share/tomcat/lib/org/apache/catalina/util
 COPY src/ServerInfo.properties /usr/share/tomcat/lib/org/apache/catalina/util
 
-# JVM settings
-RUN echo JAVA_OPTS=\"-Xms512m -Xmx2048m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 \$JAVA_OPTS\" >> /etc/tomcat/tomcat.conf \
-    && echo JAVA_OPTS=\"-XX:+HeapDumpOnOutOfMemoryError -XX:+ExitOnOutOfMemoryError -XX:OnError=\'cat hs_err_pid%p.log\' \$JAVA_OPTS\" >> /etc/tomcat/tomcat.conf
+RUN mkdir -p /dumps
 
 # disable all jar scanning for TLDs
 RUN echo "tomcat.util.scan.StandardJarScanFilter.jarsToSkip=*.jar" >> /etc/tomcat/catalina.properties

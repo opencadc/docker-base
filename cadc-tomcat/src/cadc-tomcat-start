@@ -5,16 +5,28 @@ SELF=cadc-tomcat-start
 CONFDIR=/config
 USER=$(whoami)
 
+CONTNAME=${HOSTNAME}
+if [ ! -z "${POD_NAME}" ]; then
+    # use k8s POD_NAME
+    CONTNAME=$POD_NAME
+fi
+
 TS=$(date)
 JAVA_VERSION=$(rpm -qa java-21-openjdk-headless)
 TOMCAT_VERSION=$(rpm -qa tomcat.noarch)
 
 echo "$TS $SELF START"
+echo "host/pod: $CONTNAME"
 echo "user: $USER"
 echo "home: $HOME"
 echo "image version: $IMAGE_VERSION"
 echo "java version: $JAVA_VERSION"
 echo "tomcat version: $TOMCAT_VERSION"
+
+# append multiple JVM settings
+echo JAVA_OPTS=\"-Xms512m -Xmx2048m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 \$JAVA_OPTS\" >> /etc/tomcat/tomcat.conf
+echo JAVA_OPTS=\"-XX:+ExitOnOutOfMemoryError \$JAVA_OPTS\" >> /etc/tomcat/tomcat.conf
+echo JAVA_OPTS=\"-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/dumps/heapdump_${CONTNAME}_%t.hprof \$JAVA_OPTS\" >> /etc/tomcat/tomcat.conf
 
 if [ -f $CONFDIR/catalina.properties ]; then
     echo "Configure tomcat with extra properties: $CONFDIR/catalina.properties"

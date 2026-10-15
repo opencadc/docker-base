@@ -8,8 +8,11 @@
   <GlobalNamingResources/>
 
   <!-- external config by system properties:
+    tomcat.connector.connectionTimeout=20000
+    tomcat.connector.keepAliveTimeout=20000
+    tomcat.connector.secure=true
     tomcat.connector.scheme=https
-    tomcat.connector.proxyName=<SSL terminator host name>
+    tomcat.connector.proxyName=proxy.example.net
     tomcat.connector.proxyPort=443
   -->
   <Service name="Catalina">
