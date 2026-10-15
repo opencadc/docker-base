@@ -8,5 +8,5 @@
 # 1.5 : fedora 42, java-21-openjdk-headless, tomcat-9, postgresql-jdbc-42 (amd64 + arm64)
 # 1.6 : fedora 42, java-21-openjdk-headless, tomcat-9, postgresql-jdbc-42 (+UseG1GC)
 # 1.7 : fedora 42, java-21-openjdk-headless, tomcat-9, postgresql-jdbc-42 (stop using sudo for update-ca-trust)
-VER=1.7
+VER=1.7.1
 TAGS="1 ${VER}"
