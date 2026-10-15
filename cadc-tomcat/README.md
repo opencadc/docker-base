@@ -18,6 +18,12 @@ image version: 1.2.3
 {timestamp} cadc-tomcat-start DONE
 ```
 
+## Changes
+1.7.1 improved OutOfMemory behaviour, removed astronomy native libs
+1.7 : stop using sudo for update-ca-trust)
+1.6 : JVM garbage collector: +UseG1GC
+1.5 : amd64 + arm64
+
 ## Expected deployment
 This tomcat instance is expected to have a proxy (HAproxy, apache, nginx) in front that performs
 SSL termination and forwards calls via HTTP on port 8080. Optional client certificates are passed through 
@@ -26,6 +32,14 @@ in haproxcy.cfg).
 
 Output from the tomcat startup and the tomcat server itself are written to stdout (including JVM OnError
 logs).
+
+## Resource Requirements
+The JVM is currently configured with -Xms512m -Xmx2048m and uses the G1GC (java garbage collector); the tomcat
+`request-proc` thread pool has a max size of 1024. We expect that 2.5 to 3.0GiB of memory in total is sufficient
+for a container near peak resource use.
+
+The JVM is configured to do a heap dump and then exit if it runs out of memory (OutOfMemoryError) so that
+the container orchestration system can restart and scale appropriately. The heap dump is sent to a file in `/dumps` which could be retrieved from the crashed container or a shared filesystem/volume could be mounted there to preserve them. The dump file name includes the host or pod name and a timestamp so should, never overwrite a previous dump.
 
 ## configuration
 All runtime configuration is located in /config. Application specific configuration files can also be placed 
@@ -117,7 +131,12 @@ image builds to install common packages.
 
 Current extra packages: 
 * network diagnostic tools: curl, openssl, nmap-cat
-* astronomy libs: erfa, wcslib
+* filesystem tools: acl attr
+* JDBC drivers: postgresql-jdbc (linked into tomcat lib)
+
+Removed in 1.7.1:
+* astronomy libs: erfa, wcslib are no longer needed because cadc-erfa-1.1.0 and cadc-wcs-2.3.0 include them inside
+  the jar files
 
 ## building it
 ```
