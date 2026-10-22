@@ -8,14 +8,22 @@ RUN groupadd --gid 8675309 tomcat \
     && useradd --uid 8675309 --home-dir /usr/share/tomcat --shell /sbin/nologin \
         --no-create-home --no-user-group --no-log-init tomcat
 
+# add adoptium repo for temurin OpenJDK
+RUN dnf install -y adoptium-temurin-java-repository \
+    && fedora-third-party enable \
+    && dnf clean all
+
 # install required software
 # install open source JDBC driver(s)
 # install filesystem utils
 # install minimal set of diagnostics tools: mainly for network connectivity
 RUN dnf install -y tomcat.noarch ca-certificates which gawk \
-    && dnf install -y postgresql-jdbc \
-    && dnf install -y curl openssl nmap-ncat acl attr \
+    && dnf install -y postgresql-jdbc curl openssl nmap-ncat acl attr \
+    && dnf swap -y java-21-openjdk-headless temurin-21-jdk \
     && dnf clean all
+
+ENV JAVA_HOME=/usr/lib/jvm/java-21-temurin-jdk
+ENV PATH=$JAVA_HOME/bin:$PATH
 
 # link jdbc driver(s) into tomcat lib
 RUN cd /usr/share/tomcat/lib/ \
