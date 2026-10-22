@@ -12,8 +12,8 @@ if [ ! -z "${POD_NAME}" ]; then
 fi
 
 TS=$(date)
-JAVA_VERSION=$(rpm -qa java-21-openjdk-headless)
-TOMCAT_VERSION=$(rpm -qa tomcat.noarch)
+JAVA_VERSION=$(rpm -qa | grep ^temurin)
+TOMCAT_VERSION=$(rpm -q tomcat)
 
 echo "$TS $SELF START"
 echo "host/pod: $CONTNAME"
