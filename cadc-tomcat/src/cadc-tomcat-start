@@ -55,7 +55,18 @@ if [ -e $CONFDIR/cacerts ]; then
     echo "Configure CA bundle with extra certificates: $CONFDIR/cacerts"
     cp $CONFDIR/cacerts/* /etc/pki/ca-trust/source/anchors/
 fi
-# docker build cleaned up, so must run this even without custom CA cert
+
+## blocklist for compromised root CA certs
+# RedHat RHSB-2026-012 and CVE-2026-91403 for Java
+trust extract --overwrite --format=pem-bundle \
+    --filter="pkcs11:object=Comodo%20AAA%20Services%20root;type=cert" \
+    /etc/pki/ca-trust/source/blocklist/comodo_aaa_services.pem
+trust extract --overwrite --format=pem-bundle \
+    --filter="pkcs11:object=emSign%20ECC%20Root%20CA%20-%20G3;type=cert" \
+    /etc/pki/ca-trust/source/blocklist/emsign_ecc_root_g3.pem
+echo "CA blocklist:"
+ls -l /etc/pki/ca-trust/source/blocklist/
+
 update-ca-trust
 
 mkdir -p $HOME/.ssl
