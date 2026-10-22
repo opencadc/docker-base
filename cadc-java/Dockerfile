@@ -14,11 +14,13 @@ RUN dnf install -y adoptium-temurin-java-repository \
     && dnf clean all
 
 # install required software
-# install open source astronomy libraries needed by opencadc JNI libs
 # install minimal set of diagnostics tools: mainly for network connectivity
-RUN dnf install -y temurin-21-jre-headless ca-certificates which acl attr \
-    && dnf install -y wcslib erfa curl openssl nmap-ncat \
+RUN dnf install -y ca-certificates which acl attr curl openssl nmap-ncat \
+    && dnf install -y --setopt=tsflags=noscripts temurin-21-jre-headless \
     && dnf clean all
+## work around for broken temurin post install script being skipped above
+ENV JAVA_HOME=/usr/lib/jvm/java-21-temurin-jre-headless
+ENV PATH=$JAVA_HOME/bin:$PATH
 
 # system settings and permissions
 COPY src/nofiles.conf /etc/security/limits.d/
