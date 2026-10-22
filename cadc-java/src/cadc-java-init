@@ -6,7 +6,7 @@ CONFDIR=/config
 USER=$(whoami)
 
 TS=$(date)
-JAVA_VERSION=$(rpm -qa java-21-openjdk-headless)
+JAVA_VERSION=$(rpm -qa | grep ^temurin)
 
 echo "$TS $SELF START"
 echo "user: $USER"
