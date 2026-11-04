@@ -67,14 +67,9 @@ DOCKER_CONTENT_TRUST=1 docker buildx build --platform linux/amd64,linux/arm64 -t
 docker run -it --rm --user opencadc:opencadc cadc-java:latest /bin/bash
 ```
 
-## running it
-```
-docker run --rm --user opencadc:opencadc --volume=/path/to/config:/config:ro cadc-java:latest
-```
-
 ## child container test
 ```
 docker build -t cadc-java-test -f Dockerfile.test .
-docker run -it --rm --user opencadc:opencadc --volume=/path/to/config:/config:ro cadc-java-test:latest
+docker run -it --rm --user opencadc:opencadc cadc-java-test:latest
 ```
 
