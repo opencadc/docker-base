@@ -12,7 +12,7 @@ if [ ! -z "${POD_NAME}" ]; then
 fi
 
 TS=$(date)
-JAVA_VERSION=$(rpm -qa | grep ^temurin)
+JAVA_VERSION=$(rpm -q java-21-openjdk-headless)
 TOMCAT_VERSION=$(rpm -q tomcat)
 
 echo "$TS $SELF START"
@@ -55,19 +55,19 @@ if [ -e $CONFDIR/cacerts ]; then
     echo "Configure CA bundle with extra certificates: $CONFDIR/cacerts"
     cp $CONFDIR/cacerts/* /etc/pki/ca-trust/source/anchors/
 fi
+if [ -e $CONFDIR/blocked ]; then
+    echo "Configure CA bundle with blocked certificates: $CONFDIR/blocked"
+    cp $CONFDIR/blocked/* /etc/pki/ca-trust/source/blocklist
+fi
+CERT_DIR="/opencadc/certs"
+update-ca-trust extract --output "$CERT_DIR"
 
-## blocklist for compromised root CA certs
-# RedHat RHSB-2026-012 and CVE-2026-91403 for Java
-trust extract --overwrite --format=pem-bundle \
-    --filter="pkcs11:object=Comodo%20AAA%20Services%20root;type=cert" \
-    /etc/pki/ca-trust/source/blocklist/comodo_aaa_services.pem
-trust extract --overwrite --format=pem-bundle \
-    --filter="pkcs11:object=emSign%20ECC%20Root%20CA%20-%20G3;type=cert" \
-    /etc/pki/ca-trust/source/blocklist/emsign_ecc_root_g3.pem
-echo "CA blocklist:"
-ls -l /etc/pki/ca-trust/source/blocklist/
+# For OpenSSL:
+export SSL_CERT_DIR="$CERT_DIR/pem/directory-hash"
+export SSL_CERT_FILE="$CERT_DIR/pem/tls-ca-bundle.pem"
 
-update-ca-trust
+# For java/tomcat:
+echo "javax.net.ssl.trustStore=$CERT_DIR/java/cacerts" >> /etc/tomcat/catalina.properties
 
 mkdir -p $HOME/.ssl
 chmod 700 $HOME/.ssl

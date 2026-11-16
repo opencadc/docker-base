@@ -4,14 +4,14 @@ SELF=cadc-java-init
 
 CONFDIR=/config
 USER=$(whoami)
+JAVA_VERSION=$(rpm -qa | grep ^java)
 
 TS=$(date)
 echo "$TS $SELF START"
 echo "user: $USER"
 echo "home: $HOME"
 echo "image version: $IMAGE_VERSION"
-echo "java version: "
-java -version
+echo "java version: $JAVA_VERSION"
 
 CONTNAME=${HOSTNAME}
 if [ ! -z "${POD_NAME}" ]; then
