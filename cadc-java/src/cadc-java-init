@@ -4,7 +4,7 @@ SELF=cadc-java-init
 
 CONFDIR=/config
 USER=$(whoami)
-JAVA_VERSION=$(rpm -qa | grep ^java)
+JAVA_VERSION=$(rpm -qa 'java-*')
 
 TS=$(date)
 echo "$TS $SELF START"
