@@ -10,5 +10,6 @@
 # 1.7 : fedora 42, java-21-openjdk-headless, tomcat-9, postgresql-jdbc-42 (stop using sudo for update-ca-trust)
 # 1.7.1 : 1.7 + improved OutOfMemory behaviour
 # 1.8 : fedora 42, temurin-21-jdk, ...
+# 1.9 : almalinux 10, java-21-openjdk-headless, tomcat-9, postgresql-jdbc-42
 VER=1.8
 TAGS="1 ${VER}"
