@@ -36,7 +36,8 @@ export SSL_CERT_DIR="$CERT_DIR/pem/directory-hash"
 export SSL_CERT_FILE="$CERT_DIR/pem/tls-ca-bundle.pem"
 
 # For Java:
-export JAVA_TOOL_OPTIONS="-Djavax.net.ssl.trustStore=$CERT_DIR/java/cacerts"
+JAVA_TOOL_OPTIONS="-Djavax.net.ssl.trustStore=$CERT_DIR/java/cacerts $JAVA_TOOL_OPTIONS"
+export JAVA_TOOL_OPTIONS
 
 # JVM setting
 JHS=2048m

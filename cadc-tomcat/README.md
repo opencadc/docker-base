@@ -19,10 +19,20 @@ image version: 1.2.3
 ```
 
 ## Changes
+1.8 : based on AlmaLinux:10 with java-21-openjdk-headless and tomcat-9.x
 1.7.1 improved OutOfMemory behaviour, removed astronomy native libs
 1.7 : stop using sudo for update-ca-trust)
 1.6 : JVM garbage collector: +UseG1GC
 1.5 : amd64 + arm64
+
+## Usage
+Developers use this image by dropping one (or more) war files, so the application Dockerfile should be simple.
+Standard OpenCADC usage (war file built with gradle) looks like this:
+```
+FROM images.opencadc.org/library/cadc-tomcat:1
+
+COPY build/libs/example.war /usr/share/tomcat/webapps
+```
 
 ## Expected deployment
 This tomcat instance is expected to have a proxy (HAproxy, apache, nginx) in front that performs
@@ -34,12 +44,17 @@ Output from the tomcat startup and the tomcat server itself are written to stdou
 logs).
 
 ## Resource Requirements
-The JVM is currently configured with -Xms512m -Xmx2048m and uses the G1GC (java garbage collector); the tomcat
+The JVM is currently configured with `-Xms512m -Xmx2048m` and uses the G1GC (java garbage collector); the tomcat
 `request-proc` thread pool has a max size of 1024. We expect that 2.5 to 3.0GiB of memory in total is sufficient
-for a container near peak resource use.
+for a container near peak resource use. The environment variable JAVA_HEAP_SIZE can be set to override the default
+`-Xmx2048m`; the value should be a number followed by a unit, for example `JAVA_HEAP_SIZE=4096m`. This could be
+set in a Dockerfile for applications known to need more memory or it could be set at deployment time.
 
 The JVM is configured to do a heap dump and then exit if it runs out of memory (OutOfMemoryError) so that
-the container orchestration system can restart and scale appropriately. The heap dump is sent to a file in `/dumps` which could be retrieved from the crashed container or a shared filesystem/volume could be mounted there to preserve them. The dump file name includes the host or pod name and a timestamp so should, never overwrite a previous dump.
+the container orchestration system can restart and scale appropriately. The heap dump is sent to a file 
+in `/dumps` which could be retrieved from the crashed container or a shared filesystem/volume could be 
+mounted there to preserve them. The dump file name includes the host or pod name and a timestamp so should
+never overwrite a previous dump.
 
 ## configuration
 All runtime configuration is located in /config. Application specific configuration files can also be placed 
@@ -75,10 +90,13 @@ hard coded or left at the default value. The _secure_, _scheme_, _proxyName_, an
 _proxyPort_ are the values of the SSL_terminating proxy server that sits in front of 
 the container. They are used so applications see these values in the request URI 
 (instead of the values for the container) and enable applications to generate correct 
-externally usable URLs to othe resources in the applicaiton. This generally removes 
+externally usable URLs to othe resources in the application. This generally removes 
 the need for the proxy to examine and rewrite out-going content (headers and body).
 
 Additional system properties to configure the application can also be added here.
+
+### tomcat.conf - OBSOLETE
+This file was rarely/never used and is no longer supported.
 
 ### war-rename.conf
 This optional file contains directives to rename a war file in the webapps directory before
@@ -101,15 +119,6 @@ To deploy a service on the root of the server, take advantage of this special to
 ```
 mv foo.war ROOT.war
 ```
-
-### tomcat.conf
-This optional file contains configuration used by the tomcat startup, e.g.:
-
-```
-JAVA_OPTS=" {options added during tomcat startup} $JAVA_OPTS"
-```
-Note: the default JAVA_OPTS include setting max stack space and max heap size to 
-sensible limits (currently 512MiB and 2GiB respectively).
 
 ### client certificates 
 Zero or more client certificate(s) may be included in the config directory and are 
@@ -141,6 +150,8 @@ Removed in 1.7.1:
 ## building it
 ```
 DOCKER_CONTENT_TRUST=1 docker buildx build --platform linux/amd64,linux/arm64 -t cadc-tomcat -f Dockerfile .
+
+DOCKER_CONTENT_TRUST=1 docker buildx build --pull --no-cache --platform linux/amd64,linux/arm64 -t cadc-tomcat -f Dockerfile .
 ```
 
 ## checking it

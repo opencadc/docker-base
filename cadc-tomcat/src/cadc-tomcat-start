@@ -58,11 +58,6 @@ if [ -f $CONFDIR/war-rename.conf ]; then
     done < $CONFDIR/war-rename.conf
 fi
 
-if [ -f $CONFDIR/tomcat.conf ]; then
-    echo "Configure tomcat with extra properties: $CONFDIR/tomcat.conf"
-    cat $CONFDIR/tomcat.conf >> $TOMCAT_CONF/tomcat.conf
-fi
-
 if [ -e $CONFDIR/cacerts ]; then
     echo "Configure CA bundle with extra certificates: $CONFDIR/cacerts"
     cp $CONFDIR/cacerts/* /etc/pki/ca-trust/source/anchors/
