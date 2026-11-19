@@ -1,6 +1,9 @@
 FROM almalinux:10
 
-LABEL org.opencontainers.image.authors="pdowler.cadc@gmail.com"
+ARG BASE_IMAGE_VERSION="1.9"
+LABEL org.opencadc.image.base.version="${BASE_IMAGE_VERSION}" \
+    org.opencontainers.image.version="${BASE_IMAGE_VERSION}" \
+    org.opencontainers.image.authors="https://github.com/opencadc"
 
 # create tomcat user:group with known uid:gid
 RUN groupadd --gid 8675309 tomcat \
@@ -28,7 +31,7 @@ ARG TOMCAT_MAJOR=9
 ARG TOMCAT_VERSION=9.0.124
 
 # used by entrypoint and beyond
-ENV TOMCAT_INSTALL=apache-tomcat-${TOMCAT_VERSION}.tar.gz
+ENV TOMCAT_INSTALL=apache-tomcat-${TOMCAT_VERSION}
 ENV CATALINA_HOME=/opt/tomcat
 ENV TOMCAT_CONF=/opt/tomcat/conf
 

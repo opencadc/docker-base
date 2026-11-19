@@ -1,6 +1,9 @@
 FROM almalinux:10
 
-LABEL org.opencontainers.image.authors="pdowler.cadc@gmail.com"
+ARG BASE_IMAGE_VERSION="1.8"
+LABEL org.opencadc.image.base.version="${BASE_IMAGE_VERSION}" \
+    org.opencontainers.image.version="${BASE_IMAGE_VERSION}" \
+    org.opencontainers.image.authors="https://github.com/opencadc"
 
 # create opencadc user:group with known uid:gid
 RUN groupadd --gid 8675309 opencadc \
