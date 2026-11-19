@@ -4,25 +4,49 @@ SELF=cadc-java-init
 
 CONFDIR=/config
 USER=$(whoami)
+JAVA_VERSION=$(rpm -qa 'java-*')
 
 TS=$(date)
-JAVA_VERSION=$(rpm -qa | grep ^temurin)
-
 echo "$TS $SELF START"
 echo "user: $USER"
 echo "home: $HOME"
 echo "image version: $IMAGE_VERSION"
 echo "java version: $JAVA_VERSION"
 
+CONTNAME=${HOSTNAME}
+if [ ! -z "${POD_NAME}" ]; then
+    # use k8s POD_NAME
+    CONTNAME=$POD_NAME
+fi
+
+# rebuild CA cert bundles
 if [ -e $CONFDIR/cacerts ]; then
     echo "Configure CA bundle with extra certificates: $CONFDIR/cacerts"
     cp $CONFDIR/cacerts/* /etc/pki/ca-trust/source/anchors/
 fi
-# docker build cleaned up, so must run this even without custom CA certs
-update-ca-trust
+if [ -e $CONFDIR/blocked ]; then
+    echo "Configure CA bundle with blocked certificates: $CONFDIR/blocked"
+    cp $CONFDIR/blocked/* /etc/pki/ca-trust/source/blocklist
+fi
+CERT_DIR="/opencadc/certs"
+update-ca-trust extract --output "$CERT_DIR"
 
-mkdir -p $HOME/.ssl
-chmod 700 $HOME/.ssl
+# For OpenSSL:
+export SSL_CERT_DIR="$CERT_DIR/pem/directory-hash"
+export SSL_CERT_FILE="$CERT_DIR/pem/tls-ca-bundle.pem"
+
+# For Java:
+JAVA_TOOL_OPTIONS="-Djavax.net.ssl.trustStore=$CERT_DIR/java/cacerts $JAVA_TOOL_OPTIONS"
+export JAVA_TOOL_OPTIONS
+
+# JVM setting
+JHS=2048m
+if [ ! -z "$JAVA_HEAP_SIZE" ]; then
+    JHS=$JAVA_HEAP_SIZE
+fi
+export JAVA_OPTS="-Xms512m -Xmx${JHS} -XX:+UseParallelGC -XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/dumps/heapdump_${CONTNAME}_%t.hprof"
+echo $JAVA_OPTS
+
 for pcf in $CONFDIR/*.pem; do
     [ -e "$pcf" ] || continue
     echo "Link proxy certificate: $pcf"
@@ -41,5 +65,3 @@ fi
 
 ## exec CMD
 exec $@
-
-

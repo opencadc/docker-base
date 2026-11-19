@@ -1,3 +1,6 @@
 FROM cadc-java:latest
 
-CMD ["java -version"]
+# non default
+ENV JAVA_HEAP_SIZE=1024m
+
+CMD ["which java"]

@@ -1,48 +1,43 @@
-FROM fedora:44
+FROM almalinux:10
 
-# MAINTAINER deprecated but upstream fedora image still has it
-LABEL org.opencontainers.image.authors="pdowler.cadc@gmail.com" maintainer="pdowler.cadc@gmail.com"
+ARG BASE_IMAGE_VERSION="1.8"
+LABEL org.opencadc.image.base.version="${BASE_IMAGE_VERSION}" \
+    org.opencontainers.image.version="${BASE_IMAGE_VERSION}" \
+    org.opencontainers.image.authors="https://github.com/opencadc"
 
 # create opencadc user:group with known uid:gid
 RUN groupadd --gid 8675309 opencadc \
-    && useradd --uid 8675309 --home-dir / --shell /sbin/nologin \
-        --no-create-home --no-user-group --no-log-init opencadc
+    && useradd --uid 8675309 --gid 8675309 --home-dir / --shell /sbin/nologin \
+        --no-create-home --no-log-init opencadc
 
-# add adoptium repo for temurin OpenJDK
-RUN dnf install -y adoptium-temurin-java-repository \
-    && fedora-third-party enable \
-    && dnf clean all
+# install repos
+#RUN dnf install -y epel-release \
+#    && dnf clean all
 
 # install required software
-# install minimal set of diagnostics tools: mainly for network connectivity
-RUN dnf install -y ca-certificates which acl attr curl openssl nmap-ncat \
-    && dnf install -y --setopt=tsflags=noscripts temurin-21-jre-headless \
+RUN dnf install -y ca-certificates which openssl nmap-ncat acl attr curl \
+    && dnf install -y java-21-openjdk-headless \
     && dnf clean all
-## work around for broken temurin post install script being skipped above
-ENV JAVA_HOME=/usr/lib/jvm/java-21-temurin-jre-headless
-ENV PATH=$JAVA_HOME/bin:$PATH
 
 # system settings and permissions
 COPY src/nofiles.conf /etc/security/limits.d/
 
-# allow opencadc to install CA certs and run update-ca-trust at startup
-RUN chgrp -R opencadc \
-        /etc/pki/ca-trust \
-        /etc/pki/tls \
-        /etc/pki/java \
-        /etc/ssl \
-    && chmod -R g+w \
-        /etc/pki/ca-trust \
-        /etc/pki/tls \
-        /etc/pki/java \
-        /etc/ssl \
-    && chown opencadc /etc/pki/ca-trust/extracted/pem/directory-hash
-
-# JVM settings
-ENV JAVA_OPTS="-Xms512m -Xmx2048m -XX:+UseParallelGC -XX:+HeapDumpOnOutOfMemoryError -XX:OnError='cat hs_err_pid%p.log'"
-
 RUN mkdir /.ssl && chown opencadc:opencadc /.ssl && chmod 700 /.ssl
+
+# allow opencadc to install and block CA certs on startup
+RUN chgrp opencadc /etc/pki/ca-trust/source/anchors /etc/pki/ca-trust/source/blocklist \
+    && chmod g+w /etc/pki/ca-trust/source/anchors /etc/pki/ca-trust/source/blocklist
+
+# dest dir for update-ca-trust --output (see startup script)
+RUN mkdir -p /opencadc/certs && chown -R opencadc:opencadc /opencadc
+
+# location for JVM heap dump
+RUN mkdir /dumps && chown opencadc:opencadc /dumps
 
 COPY src/cadc-java-init /usr/bin/cadc-java-init
 
+USER 8675309:8675309
 ENTRYPOINT ["/usr/bin/cadc-java-init"]
+
+
+

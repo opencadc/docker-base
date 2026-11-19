@@ -12,8 +12,9 @@ if [ ! -z "${POD_NAME}" ]; then
 fi
 
 TS=$(date)
-JAVA_VERSION=$(rpm -qa | grep ^temurin)
-TOMCAT_VERSION=$(rpm -q tomcat)
+JAVA_VERSION=$(rpm -qa 'java-*')
+# currently: env from Dockerfile
+#TOMCAT_INSTALL=$(rpm -q tomcat)
 
 echo "$TS $SELF START"
 echo "host/pod: $CONTNAME"
@@ -21,16 +22,27 @@ echo "user: $USER"
 echo "home: $HOME"
 echo "image version: $IMAGE_VERSION"
 echo "java version: $JAVA_VERSION"
-echo "tomcat version: $TOMCAT_VERSION"
+echo "tomcat version: $TOMCAT_INSTALL"
 
 # append multiple JVM settings
-echo JAVA_OPTS=\"-Xms512m -Xmx2048m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 \$JAVA_OPTS\" >> /etc/tomcat/tomcat.conf
-echo JAVA_OPTS=\"-XX:+ExitOnOutOfMemoryError \$JAVA_OPTS\" >> /etc/tomcat/tomcat.conf
-echo JAVA_OPTS=\"-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/dumps/heapdump_${CONTNAME}_%t.hprof \$JAVA_OPTS\" >> /etc/tomcat/tomcat.conf
+# JVM setting
+JHS=2048m
+if [ ! -z "$JAVA_HEAP_SIZE" ]; then
+    JHS=$JAVA_HEAP_SIZE
+fi
+# rpm installed tomcat uses tomcat.conf for environment
+#echo JAVA_OPTS=\"-Xms512m -Xmx${JHS} -XX:+UseG1GC -XX:MaxGCPauseMillis=200 \$JAVA_OPTS\" >> $TOMCAT_CONF/tomcat.conf
+#echo JAVA_OPTS=\"-XX:+ExitOnOutOfMemoryError \$JAVA_OPTS\" >> $TOMCAT_CONF/tomcat.conf
+#echo JAVA_OPTS=\"-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/dumps/heapdump_${CONTNAME}_%t.hprof \$JAVA_OPTS\" >> $TOMCAT_CONF/tomcat.conf
+# fedora init scripts sourced tomcat.conf for env: do it manually for now
+CATALINA_OPTS="-Xms512m -Xmx${JHS} -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+CATALINA_OPTS="-XX:+ExitOnOutOfMemoryError $CATALINA_OPTS"
+CATALINA_OPTS="-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/dumps/heapdump_${CONTNAME}_%t.hprof $CATALINA_OPTS"
+export CATALINA_OPTS
 
 if [ -f $CONFDIR/catalina.properties ]; then
     echo "Configure tomcat with extra properties: $CONFDIR/catalina.properties"
-    cat $CONFDIR/catalina.properties >> /etc/tomcat/catalina.properties
+    cat $CONFDIR/catalina.properties >> $TOMCAT_CONF/catalina.properties
 fi
 
 if [ -f $CONFDIR/war-rename.conf ]; then
@@ -46,28 +58,23 @@ if [ -f $CONFDIR/war-rename.conf ]; then
     done < $CONFDIR/war-rename.conf
 fi
 
-if [ -f $CONFDIR/tomcat.conf ]; then
-    echo "Configure tomcat with extra properties: $CONFDIR/tomcat.conf"
-    cat $CONFDIR/tomcat.conf >> /etc/tomcat/tomcat.conf
-fi
-
 if [ -e $CONFDIR/cacerts ]; then
     echo "Configure CA bundle with extra certificates: $CONFDIR/cacerts"
     cp $CONFDIR/cacerts/* /etc/pki/ca-trust/source/anchors/
 fi
+if [ -e $CONFDIR/blocked ]; then
+    echo "Configure CA bundle with blocked certificates: $CONFDIR/blocked"
+    cp $CONFDIR/blocked/* /etc/pki/ca-trust/source/blocklist
+fi
+CERT_DIR="/opencadc/certs"
+update-ca-trust extract --output "$CERT_DIR"
 
-## blocklist for compromised root CA certs
-# RedHat RHSB-2026-012 and CVE-2026-91403 for Java
-trust extract --overwrite --format=pem-bundle \
-    --filter="pkcs11:object=Comodo%20AAA%20Services%20root;type=cert" \
-    /etc/pki/ca-trust/source/blocklist/comodo_aaa_services.pem
-trust extract --overwrite --format=pem-bundle \
-    --filter="pkcs11:object=emSign%20ECC%20Root%20CA%20-%20G3;type=cert" \
-    /etc/pki/ca-trust/source/blocklist/emsign_ecc_root_g3.pem
-echo "CA blocklist:"
-ls -l /etc/pki/ca-trust/source/blocklist/
+# For OpenSSL:
+export SSL_CERT_DIR="$CERT_DIR/pem/directory-hash"
+export SSL_CERT_FILE="$CERT_DIR/pem/tls-ca-bundle.pem"
 
-update-ca-trust
+# For java/tomcat:
+echo "javax.net.ssl.trustStore=$CERT_DIR/java/cacerts" >> $TOMCAT_CONF/catalina.properties
 
 mkdir -p $HOME/.ssl
 chmod 700 $HOME/.ssl
@@ -81,5 +88,8 @@ ln -s /config $HOME/config
 TS=$(date)
 echo "$TS $SELF DONE"
 
-/usr/libexec/tomcat/server start
+# typical for fedora/redhat rpm packages
+#/usr/libexec/tomcat/server start
 
+# for apache-tomcat binary tarball
+exec /opt/tomcat/bin/catalina.sh run

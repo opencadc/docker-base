@@ -1,62 +1,92 @@
-FROM fedora:42
+FROM almalinux:10
 
-# MAINTAINER deprecated but upstream fedora image still has it
-LABEL org.opencontainers.image.authors="pdowler.cadc@gmail.com" maintainer="pdowler.cadc@gmail.com"
+ARG BASE_IMAGE_VERSION="1.9"
+LABEL org.opencadc.image.base.version="${BASE_IMAGE_VERSION}" \
+    org.opencontainers.image.version="${BASE_IMAGE_VERSION}" \
+    org.opencontainers.image.authors="https://github.com/opencadc"
 
 # create tomcat user:group with known uid:gid
 RUN groupadd --gid 8675309 tomcat \
-    && useradd --uid 8675309 --home-dir /usr/share/tomcat --shell /sbin/nologin \
-        --no-create-home --no-user-group --no-log-init tomcat
+    && useradd --uid 8675309 --gid 8675309 \
+        --home-dir /usr/share/tomcat \
+        --shell /sbin/nologin \
+        --no-create-home --no-log-init tomcat
 
-# add adoptium repo for temurin OpenJDK
-RUN dnf install -y adoptium-temurin-java-repository \
-    && fedora-third-party enable \
-    && dnf clean all
+# install repos
+#RUN dnf install -y epel-release \
+#    && dnf clean all
 
 # install required software
 # install open source JDBC driver(s)
 # install filesystem utils
 # install minimal set of diagnostics tools: mainly for network connectivity
-RUN dnf install -y tomcat.noarch ca-certificates which gawk \
-    && dnf install -y postgresql-jdbc curl openssl nmap-ncat acl attr \
-    && dnf swap -y java-21-openjdk-headless temurin-21-jdk \
+RUN dnf install -y ca-certificates which openssl nmap-ncat acl attr curl gpg tar \
+    && dnf install -y java-21-openjdk-headless postgresql-jdbc \
     && dnf clean all
 
-ENV JAVA_HOME=/usr/lib/jvm/java-21-temurin-jdk
-ENV PATH=$JAVA_HOME/bin:$PATH
+# apache tomcat 9 official binary release
+ARG TOMCAT_CDN=https://dlcdn.apache.org
+ARG TOMCAT_URL=https://downloads.apache.org
+ARG TOMCAT_MAJOR=9
+ARG TOMCAT_VERSION=9.0.124
+
+# used by entrypoint and beyond
+ENV TOMCAT_INSTALL=apache-tomcat-${TOMCAT_VERSION}
+ENV CATALINA_HOME=/opt/tomcat
+ENV TOMCAT_CONF=/opt/tomcat/conf
+
+# thbis creates /opt if necessary
+COPY src/apache/KEYS /opt/KEYS
+
+RUN export GNUPGHOME="$(mktemp -d)" \
+    && gpg --batch --import /opt/KEYS \
+    && cd /opt \
+    && curl -fsSLO "${TOMCAT_CDN}/tomcat/tomcat-${TOMCAT_MAJOR}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
+    && curl -fsSLO "${TOMCAT_URL}/tomcat/tomcat-${TOMCAT_MAJOR}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz.asc" \
+    && curl -fsSLO "${TOMCAT_URL}/tomcat/tomcat-${TOMCAT_MAJOR}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz.sha512" \
+    && sha512sum -c "apache-tomcat-${TOMCAT_VERSION}.tar.gz.sha512" \
+    && gpg --batch --verify "apache-tomcat-${TOMCAT_VERSION}.tar.gz.asc" "apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
+    && tar xfz "apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
+    && mv apache-tomcat-${TOMCAT_VERSION} tomcat \
+    && rm -rf "$GNUPGHOME" apache-tomcat-*
 
 # link jdbc driver(s) into tomcat lib
-RUN cd /usr/share/tomcat/lib/ \
+RUN cd /opt/tomcat/lib/ \
     && for jar in $(find /usr/share/java/postgresql-jdbc /usr/share/java/ongres-s* -type f); do ln -s $jar .; done
 
+COPY src/server.xml /opt/tomcat/conf/server.xml
+RUN chmod 664 /opt/tomcat/conf/catalina.properties # /opt/tomcat/conf/tomcat.conf
+    
 # system settings and permissions
 COPY src/nofiles.conf /etc/security/limits.d/
-COPY src/server.xml /etc/tomcat/server.xml
 
-RUN chmod 664 /etc/tomcat/catalina.properties /etc/tomcat/tomcat.conf
+# allow tomcat to install and block CA certs on startup
+RUN chgrp tomcat /etc/pki/ca-trust/source/anchors /etc/pki/ca-trust/source/blocklist \
+    && chmod g+w /etc/pki/ca-trust/source/anchors /etc/pki/ca-trust/source/blocklist
 
-# allow tomcat to install CA certs and run update-ca-trust at startup
-RUN chgrp -R tomcat \
-        /etc/pki/ca-trust \
-        /etc/pki/tls \
-        /etc/pki/java \
-        /etc/ssl \
-    && chmod -R g+w \
-        /etc/pki/ca-trust \
-        /etc/pki/tls \
-        /etc/pki/java \
-        /etc/ssl \
-    && chown tomcat /etc/pki/ca-trust/extracted/pem/directory-hash
+# dest dir for update-ca-trust --output (see startup script)
+RUN mkdir -p /opencadc/certs && chown -R tomcat:tomcat /opencadc
+
+# location for JVM heap dump
+RUN mkdir /dumps && chown tomcat:tomcat /dumps
 
 # hide tomcat version in error pages
-RUN mkdir -p /usr/share/tomcat/lib/org/apache/catalina/util
-COPY src/ServerInfo.properties /usr/share/tomcat/lib/org/apache/catalina/util
-
-RUN mkdir -p /dumps
+RUN mkdir -p /opt/tomcat/lib/org/apache/catalina/util
+COPY src/ServerInfo.properties /opt/tomcat/lib/org/apache/catalina/util
 
 # disable all jar scanning for TLDs
-RUN echo "tomcat.util.scan.StandardJarScanFilter.jarsToSkip=*.jar" >> /etc/tomcat/catalina.properties
+RUN echo "tomcat.util.scan.StandardJarScanFilter.jarsToSkip=*.jar" >> /opt/tomcat/conf/catalina.properties
+
+# backwards compatible place for downstream builds to put war file(s)
+RUN mkdir -p /usr/share/tomcat/webapps \
+    && rm -rf /opt/tomcat/webapps \
+    && ln -s /usr/share/tomcat/webapps /opt/tomcat/webapps
+
+# fix ownership
+RUN chown -R tomcat:tomcat /opt/tomcat /usr/share/tomcat
 
 COPY src/cadc-tomcat-start /usr/bin/cadc-tomcat-start
+
+USER 8675309:8675309
 CMD ["/usr/bin/cadc-tomcat-start"]
 
