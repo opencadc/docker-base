@@ -7,8 +7,13 @@ LABEL org.opencadc.image.base.version="${BASE_IMAGE_VERSION}" \
 
 # create opencadc user:group with known uid:gid
 RUN groupadd --gid 8675309 opencadc \
-    && useradd --uid 8675309 --gid 8675309 --home-dir / --shell /sbin/nologin \
+    && useradd --uid 8675309 --gid 8675309 \
+        --home-dir / \
+        --shell /sbin/nologin \
         --no-create-home --no-log-init opencadc
+
+# upgrade base for security fixes
+RUN dnf upgrade -y && dnf clean all
 
 # install repos
 #RUN dnf install -y epel-release \

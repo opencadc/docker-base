@@ -12,6 +12,9 @@ RUN groupadd --gid 8675309 tomcat \
         --shell /sbin/nologin \
         --no-create-home --no-log-init tomcat
 
+# upgrade base for security fixes
+RUN dnf upgrade -y && dnf clean all
+
 # install repos
 #RUN dnf install -y epel-release \
 #    && dnf clean all
