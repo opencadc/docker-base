@@ -35,20 +35,19 @@ ENV TOMCAT_INSTALL=apache-tomcat-${TOMCAT_VERSION}
 ENV CATALINA_HOME=/opt/tomcat
 ENV TOMCAT_CONF=/opt/tomcat/conf
 
-COPY src/apache/KEYS /root/KEYS
+# thbis creates /opt if necessary
+COPY src/apache/KEYS /opt/KEYS
 
-RUN mkdir -p /opt \
+RUN export GNUPGHOME="$(mktemp -d)" \
+    && gpg --batch --import /opt/KEYS \
     && cd /opt \
     && curl -fsSLO "${TOMCAT_CDN}/tomcat/tomcat-${TOMCAT_MAJOR}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
     && curl -fsSLO "${TOMCAT_URL}/tomcat/tomcat-${TOMCAT_MAJOR}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz.asc" \
     && curl -fsSLO "${TOMCAT_URL}/tomcat/tomcat-${TOMCAT_MAJOR}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz.sha512" \
     && sha512sum -c "apache-tomcat-${TOMCAT_VERSION}.tar.gz.sha512" \
-    && export GNUPGHOME="$(mktemp -d)" \
-    && gpg --batch --import /root/KEYS \
     && gpg --batch --verify "apache-tomcat-${TOMCAT_VERSION}.tar.gz.asc" "apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
     && tar xfz "apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
     && mv apache-tomcat-${TOMCAT_VERSION} tomcat \
-    && cd tomcat && rm -rf webapps && ln -s /usr/share/tomcat/webapps . && cd .. \
     && rm -rf "$GNUPGHOME" apache-tomcat-*
 
 # link jdbc driver(s) into tomcat lib
@@ -79,7 +78,9 @@ COPY src/ServerInfo.properties /opt/tomcat/lib/org/apache/catalina/util
 RUN echo "tomcat.util.scan.StandardJarScanFilter.jarsToSkip=*.jar" >> /opt/tomcat/conf/catalina.properties
 
 # backwards compatible place for downstream builds to put war file(s)
-RUN mkdir -p /usr/share/tomcat/webapps
+RUN mkdir -p /usr/share/tomcat/webapps \
+    && rm -rf /opt/tomcat/webapps \
+    && ln -s /usr/share/tomcat/webapps /opt/tomcat/webapps
 
 # fix ownership
 RUN chown -R tomcat:tomcat /opt/tomcat /usr/share/tomcat
