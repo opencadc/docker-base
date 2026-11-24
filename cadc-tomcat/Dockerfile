@@ -20,11 +20,9 @@ RUN dnf upgrade -y && dnf clean all
 #    && dnf clean all
 
 # install required software
-# install open source JDBC driver(s)
-# install filesystem utils
-# install minimal set of diagnostics tools: mainly for network connectivity
-RUN dnf install -y ca-certificates which openssl nmap-ncat acl attr curl gpg tar \
-    && dnf install -y java-21-openjdk-headless postgresql-jdbc \
+# java 21
+# open source JDBC driver(s)
+RUN dnf install -y ca-certificates java-21-openjdk-headless postgresql-jdbc \
     && dnf clean all
 
 # apache tomcat 9 official binary release
@@ -38,10 +36,11 @@ ENV TOMCAT_INSTALL=apache-tomcat-${TOMCAT_VERSION}
 ENV CATALINA_HOME=/opt/tomcat
 ENV TOMCAT_CONF=/opt/tomcat/conf
 
-# thbis creates /opt if necessary
+# this creates /opt if necessary
 COPY src/apache/KEYS /opt/KEYS
 
-RUN export GNUPGHOME="$(mktemp -d)" \
+RUN dnf install -y gnupg2 \
+    && export GNUPGHOME="$(mktemp -d)" \
     && gpg --batch --import /opt/KEYS \
     && cd /opt \
     && curl -fsSLO "${TOMCAT_CDN}/tomcat/tomcat-${TOMCAT_MAJOR}/v${TOMCAT_VERSION}/bin/apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
@@ -51,7 +50,9 @@ RUN export GNUPGHOME="$(mktemp -d)" \
     && gpg --batch --verify "apache-tomcat-${TOMCAT_VERSION}.tar.gz.asc" "apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
     && tar xfz "apache-tomcat-${TOMCAT_VERSION}.tar.gz" \
     && mv apache-tomcat-${TOMCAT_VERSION} tomcat \
-    && rm -rf "$GNUPGHOME" apache-tomcat-*
+    && rm -rf "$GNUPGHOME" apache-tomcat-* \
+    && dnf remove -y gnupg2 \
+    && dnf clean all
 
 # link jdbc driver(s) into tomcat lib
 RUN cd /opt/tomcat/lib/ \

@@ -20,8 +20,7 @@ RUN dnf upgrade -y && dnf clean all
 #    && dnf clean all
 
 # install required software
-RUN dnf install -y ca-certificates which openssl nmap-ncat acl attr curl \
-    && dnf install -y java-21-openjdk-headless \
+RUN dnf install -y ca-certificates java-21-openjdk-headless \
     && dnf clean all
 
 # system settings and permissions

@@ -77,13 +77,7 @@ is attached at runtime.
 
 ## additional linux packages
 
-This image is based on Fedora Linux, so additional linux packages should be installed using the `dnf` command.
-Several fedora packages are installed in addition to OpenJDK; this reduces the need for downstream 
-image builds to install common packages.
-
-Current extra packages: 
-* filesystem tools: acl attr
-* network diagnostic tools: curl, openssl, nmap-cat
+This image is currently AlmaLinux:10 Linux, so additional linux packages should be installed using the `dnf` command.
 
 ## building it
 ```
