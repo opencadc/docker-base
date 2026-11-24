@@ -134,13 +134,11 @@ system trust store.
 
 ## additional linux packages
 
-This image is based on Fedora Linux, so additional linux packages should be installed using the `dnf` command.
+This image is based on AlmaLinux, so additional linux packages should be installed using the `dnf` command.
 Several fedora packages are installed in addition to OpenJDK and tomcat; this reduces the need for downstream 
 image builds to install common packages.
 
 Current extra packages: 
-* network diagnostic tools: curl, openssl, nmap-cat
-* filesystem tools: acl attr
 * JDBC drivers: postgresql-jdbc (linked into tomcat lib)
 
 Removed in 1.7.1:
