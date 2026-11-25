@@ -18,18 +18,31 @@ image version: 1.2.3
 {timestamp} cadc-tomcat-start DONE
 ```
 
+## Stable image content
+The following aspects of the image will remain stable and can be used by downstream build and deployment:
+- the tomcat uid and gid is 8675309
+- the tomcat home dir: HOME = /usr/share/tomcat
+- war file(s) are copied into /usr/share/tomcat/webapps
+- configuration in /config will be made available to applications in $HOME/config
+
 ## Changes
-1.8 : based on AlmaLinux:10 with java-21-openjdk-headless and tomcat-9.x
-1.7.1 improved OutOfMemory behaviour, removed astronomy native libs
-1.7 : stop using sudo for update-ca-trust)
-1.6 : JVM garbage collector: +UseG1GC
-1.5 : amd64 + arm64
+- 1.9 : based on AlmaLinux:10 with java-21-openjdk-headless and tomcat-9
+- 1.8 : fedora 42, temurin-21-jdk, tomcat-9
+- 1.7.1 improved OutOfMemory behaviour, removed astronomy native libs
+- 1.7 : stop using sudo for update-ca-trust
+- 1.6 : JVM garbage collector: +UseG1GC
+- 1.5 : fedora 42, java-21-openjdk-headless, tomcat-9, postgresql-jdbc-42 (amd64 + arm64)
+- 1.4 : fedora 42, java-21-openjdk-headless, tomcat-9, postgresql-jdbc-42
+
 
 ## Usage
 Developers use this image by dropping one (or more) war files, so the application Dockerfile should be simple.
 Standard OpenCADC usage (war file built with gradle) looks like this:
 ```
 FROM images.opencadc.org/library/cadc-tomcat:1
+
+ENV IMAGE_VERSION="1.2.3"
+LABEL org.opencontainers.image.version="${IMAGE_VERSION}"
 
 COPY build/libs/example.war /usr/share/tomcat/webapps
 ```
@@ -120,26 +133,34 @@ To deploy a service on the root of the server, take advantage of this special to
 mv foo.war ROOT.war
 ```
 
-### client certificates 
+### client certificates - DEPRECATED
 Zero or more client certificate(s) may be included in the config directory and are 
 made available as `{user.home}/.ssl/{cert filename}` for use by the application (typically: 
 server-to-server calls for A&A support). Client certificate files must have a `.pem` extension.
 
-TBD: this is questionable since this is a credential and not configuration per se and it 
-probably expires during the lifetime of the container.
+TBD: deployments that require client certificates should add them to the tomcat home directory
+at runtime.
 
 ### cacerts
 This optional directory includes CA certificates (pem format) that are added to the 
 system trust store.
 
-## additional linux packages
+### blocklist
+This optional directory can include CA certificates (pem format) that are no longer trusted; they
+will be removed from the system trust store.
 
+## additional linux packages
 This image is based on AlmaLinux, so additional linux packages should be installed using the `dnf` command.
-Several fedora packages are installed in addition to OpenJDK and tomcat; this reduces the need for downstream 
+
+Several packages are installed in addition to OpenJDK and tomcat; this reduces the need for downstream 
 image builds to install common packages.
 
 Current extra packages: 
 * JDBC drivers: postgresql-jdbc (linked into tomcat lib)
+
+Removed in 1.9:
+* network diagnostic tools: openssl, curl, nmap
+* filesystem utils: acl attr
 
 Removed in 1.7.1:
 * astronomy libs: erfa, wcslib are no longer needed because cadc-erfa-1.1.0 and cadc-wcs-2.3.0 include them inside
@@ -156,7 +177,7 @@ DOCKER_CONTENT_TRUST=1 docker buildx build --pull --no-cache --platform linux/am
 ```
 docker run --rm -it --user tomcat:tomcat cadc-tomcat:latest /bin/bash
 
-docker run --rm -it cadc-tomcat:latest /bin/bash
+docker run --rm -it --user root:root cadc-tomcat:latest /bin/bash
 ```
 
 ## running it
