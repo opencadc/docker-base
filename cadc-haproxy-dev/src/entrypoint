@@ -35,6 +35,6 @@ fi
 echo -n "init DONE: " >> $LOG
 date >> $LOG
 
-# run on foreground
+# run in foreground
 /usr/sbin/haproxy -db -f /etc/haproxy/haproxy.cfg >> $LOG
 
