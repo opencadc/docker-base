@@ -1,7 +1,12 @@
-FROM fedora:42
+FROM almalinux:10
 
-# MAINTAINER deprecated but upstream fedora image still has it
-LABEL org.opencontainers.image.authors="pdowler.cadc@gmail.com" maintainer="pdowler.cadc@gmail.com"
+ARG BASE_IMAGE_VERSION="1.3"
+LABEL org.opencadc.image.base.version="${BASE_IMAGE_VERSION}" \
+    org.opencontainers.image.version="${BASE_IMAGE_VERSION}" \
+    org.opencontainers.image.authors="https://github.com/opencadc"
+
+# upgrade base for security fixes
+RUN dnf upgrade -y && dnf clean all
 
 RUN dnf -y install haproxy && dnf clean all
 

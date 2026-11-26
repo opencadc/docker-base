@@ -19,7 +19,9 @@ The default haproxy.cfg specifies a single back end at `cadc-service:8080` (see 
 
 ## building it
 ```
-DOCKER_CONTENT_TRUST=1 docker build -t cadc-haproxy-dev -f Dockerfile .
+DOCKER_CONTENT_TRUST=1 docker buildx build --platform linux/amd64,linux/arm64 -t cadc-java -f Dockerfile .
+
+DOCKER_CONTENT_TRUST=1 docker buildx build --pull --no-cache --platform linux/amd64,linux/arm64 -t cadc-java -f Dockerfile .
 ```
 
 ## checking it
@@ -29,15 +31,11 @@ docker run --rm -it cadc-haproxy-dev:latest /bin/bash
 
 ## running it
 ```
-docker run --rm --volume=<path-to-external-logs>:/logs:rw --volume=<path-to-server-cert>:/config:ro --name haproxy cadc-haproxy-dev:latest
+docker run --rm --volume=<path-to-server-cert>:/config:ro \
+    [--volume=<path-to-external-logs>:/logs:rw] \
+    --name haproxy cadc-haproxy-dev:latest
 ```
 Optional: expose the https port (443) on the host: `-p 443:443`
 
 Optional: use the default haproxy.cfg and a single back end container: `--link <backend-container-name>:cadc-service` 
-
-## attach to an existing running container
-docker exec -it haproxy /bin/bash
-
-## kill a running container
-docker kill haproxy
 

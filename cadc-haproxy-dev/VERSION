@@ -2,5 +2,6 @@
 # 1.0 : fedora 40 + haproxy
 # 1.1 : fedora 42 + haproxy
 # 1.2 : fedora 42 + haproxy, amd64 + arm64
-VER="1.2"
+# 1.3 : almalinux 10 + haproxy, amd64 + arm64
+VER="1.3"
 TAGS="1 $VER"
