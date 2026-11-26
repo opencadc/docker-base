@@ -5,7 +5,12 @@ LABEL org.opencadc.image.base.version="${BASE_IMAGE_VERSION}" \
     org.opencontainers.image.version="${BASE_IMAGE_VERSION}" \
     org.opencontainers.image.authors="https://github.com/opencadc"
 
-# create tomcat user:group with known uid:gid
+## stable public API of this image ##
+# USER=8675309:8675309 aka tomcat:tomcat
+# HOME=/usr/share/tomcat
+# webapps go into $HOME/webapps
+
+# create tomcat user:group
 RUN groupadd --gid 8675309 tomcat \
     && useradd --uid 8675309 --gid 8675309 \
         --home-dir /usr/share/tomcat \
